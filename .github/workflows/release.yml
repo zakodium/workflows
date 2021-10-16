@@ -1,4 +1,4 @@
-name: Release a JavaScript package
+name: Release a Node.js package
 
 on:
   workflow_call:

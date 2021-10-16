@@ -19,7 +19,7 @@ on:
       github-token:
         required: true
       npm-token:
-        required: ${{ inputs.npm }}
+        required: false
 
 jobs:
   release-please:

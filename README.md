@@ -4,6 +4,59 @@ Shared reusable GitHub workflows.
 
 ## Available workflows
 
+### Node.js CI
+
+Generic workflow to run linters and tests for Node.js projects. It supports `eslint`,
+`prettier`, and `check-types` linter steps and will run tests using a matrix of
+Node.js versions.
+
+Inputs:
+
+* **node-version**:
+  * Version of Node.js used to run the lint steps.
+  * Default: `16.x`
+* **npm-setup-command**:
+  * Command to run to setup the package before running other steps.
+  * Default: `npm install`
+* **lint-eslint**:
+  * Whether to run the `eslint` npm script.
+  * Default: `true`
+* **lint-prettier**:
+  * Whether to run the `prettier` npm script.
+  * Default: `true`
+* **lint-check-types**:
+  * Whether to run the `check-types` npm script. This should be set to `true`
+    for TypeScript projects.
+  * Default: `false`
+* **node-version-matrix**:
+  * Versions of Node.js to test on, as a JSON array.
+  * Default: `'[12, 14, 16]'`
+* **npm-test-command**:
+  * Command used to run the tests.
+  * Default: `npm run test-only`
+* **upload-coverage**:
+  * Whether to run the Codecov action to upload coverage data.
+  * Default: `true`
+
+Example usage:
+
+```yml
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  nodejs:
+    uses: zakodium/workflows/.github/workflows/nodejs.yml@nodejs-v1
+    with:
+      node-version-matrix: '[14, 16]'
+      lint-check-types: true
+```
+
 ### Release
 
 The release workflow helps to automatically release packages that conform the

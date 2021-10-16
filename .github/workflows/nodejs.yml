@@ -26,15 +26,15 @@ on:
         type: boolean
         default: false
       node-version-matrix:
-        description: Versions of Node.js to test against, as a JSON array.
+        description: Versions of Node.js to test on, as a JSON array.
         type: string
         default: '[12, 14, 16]'
       npm-test-command:
-        description: Command to run to run the tests.
+        description: Command used to run the tests.
         type: string
         default: npm run test-only
-      report-coverage:
-        description: Whether to run the Codecov action to report coverage.
+      upload-coverage:
+        description: Whether to run the Codecov action to upload coverage data.
         type: boolean
         default: true
 
@@ -74,5 +74,5 @@ jobs:
       - name: Run tests
         run: ${{ inputs.npm-test-command }}
       - name: Send coverage report to Codecov
-        if: ${{ inputs.report-coverage }}
+        if: ${{ inputs.upload-coverage }}
         uses: codecov/codecov-action@v2

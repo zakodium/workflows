@@ -14,7 +14,7 @@ on:
         type: string
         default: 16.x
       npm-setup-command:
-        description: Command to run to setup the package before publishing to npm.
+        description: Command used to setup the package before publishing to npm.
         type: string
         default: npm install
     secrets:

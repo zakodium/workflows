@@ -16,7 +16,7 @@ Inputs:
   * Version of Node.js used to run the lint steps.
   * Default: `16.x`
 * **npm-setup-command**:
-  * Command to run to setup the package before running other steps.
+  * Command used to setup the package before running other steps.
   * Default: `npm install`
 * **lint-eslint**:
   * Whether to run the `eslint` npm script.
@@ -77,7 +77,7 @@ Inputs:
   * Version of Node.js used to run the npm publish steps.
   * Default: `16.x`
 * **npm-setup-command**:
-  * Command to run to setup the package before publishing to npm.
+  * Command used to setup the package before publishing to npm.
   * Default: `npm install`
 
 Example usage:

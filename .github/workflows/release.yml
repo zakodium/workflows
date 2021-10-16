@@ -10,11 +10,12 @@ on:
         type: boolean
         default: false
       node-version:
-        description: |
-          The version of Node.js to use. If not specified, version 16.x
-          will be used.
         type: string
         default: 16.x
+      npm-setup-command:
+        description: Command to run to setup the package before publishing to npm.
+        type: string
+        default: npm install
     secrets:
       github-token:
         required: true
@@ -46,7 +47,7 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: 'https://registry.npmjs.org'
-      - run: npm install
+      - run: ${{ inputs.npm-setup-command }}
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}

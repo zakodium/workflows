@@ -49,13 +49,13 @@ jobs:
       - name: Setup package
         run: ${{ inputs.npm-setup-command }}
       - name: Run ESLint
-        if: ${{ inputs.lint-eslint }}
+        if: ${{ inputs.lint-eslint && always() }}
         run: npm run eslint
       - name: Run Prettier
-        if: ${{ inputs.lint-prettier }}
+        if: ${{ inputs.lint-prettier && always() }}
         run: npm run prettier
       - name: Check types
-        if: ${{ inputs.lint-check-types }}
+        if: ${{ inputs.lint-check-types && always() }}
         run: npm run check-types
   test:
     runs-on: ubuntu-latest

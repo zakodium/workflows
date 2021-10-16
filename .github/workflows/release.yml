@@ -38,7 +38,7 @@ jobs:
           bump-minor-pre-major: Yes
   npm-publish:
     needs: release-please
-    if: ${{ inputs.npm }} && ${{ needs.release-please.outputs.release_created }}
+    if: ${{ inputs.npm && needs.release-please.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

@@ -10,6 +10,7 @@ on:
         type: boolean
         default: false
       node-version:
+        description: Version of Node.js used to run the npm publish steps.
         type: string
         default: 16.x
       npm-setup-command:

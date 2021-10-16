@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       npm:
-        description: |
+        description: >
           Whether the package will be published to npm. You must pass the
           npm-token secret in that case.
         type: boolean

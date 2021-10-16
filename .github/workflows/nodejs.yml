@@ -1,0 +1,78 @@
+name: Node.js CI
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Version of Node.js used to run the lint steps.
+        type: string
+        default: 16.x
+      npm-setup-command:
+        description: Command to run to setup the package before running other steps.
+        type: string
+        default: npm install
+      lint-eslint:
+        description: Whether to run the `eslint` npm script.
+        type: boolean
+        default: true
+      lint-prettier:
+        description: Whether to run the `prettier` npm script.
+        type: boolean
+        default: true
+      lint-check-types:
+        description: >
+          Whether to run the `check-types` npm script. This should be set to `true`
+          for TypeScript projects.
+        type: boolean
+        default: false
+      node-version-matrix:
+        description: Versions of Node.js to test against, as a JSON array.
+        type: string
+        default: '[12, 14, 16]'
+      npm-test-command:
+        description: Command to run to run the tests.
+        type: string
+        default: npm run test-only
+      report-coverage:
+        description: Whether to run the Codecov action to report coverage.
+        type: boolean
+        default: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Setup package
+        run: ${{ inputs.npm-setup-command }}
+      - name: Run ESLint
+        if: ${{ inputs.lint-eslint }}
+        run: npm run eslint
+      - name: Run Prettier
+        if: ${{ inputs.lint-prettier }}
+        run: npm run prettier
+      - name: Check types
+        if: ${{ inputs.lint-check-types }}
+        run: npm run check-types
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ${{ fromJson(inputs.node-version-matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Setup package
+        run: ${{ inputs.npm-setup-command }}
+      - name: Run tests
+        run: ${{ inputs.npm-test-command }}
+      - name: Send coverage report to Codecov
+        if: ${{ inputs.report-coverage }}
+        uses: codecov/codecov-action@v2

@@ -39,7 +39,8 @@ on:
         default: true
 
 jobs:
-  lint:
+  lint-eslint:
+    if: ${{ inputs.lint-eslint }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -49,13 +50,30 @@ jobs:
       - name: Setup package
         run: ${{ inputs.npm-setup-command }}
       - name: Run ESLint
-        if: ${{ inputs.lint-eslint && always() }}
         run: npm run eslint
+  lint-prettier:
+    if: ${{ inputs.lint-prettier }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Setup package
+        run: ${{ inputs.npm-setup-command }}
       - name: Run Prettier
-        if: ${{ inputs.lint-prettier && always() }}
         run: npm run prettier
+  lint-check-types:
+    if: ${{ inputs.lint-check-types }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Setup package
+        run: ${{ inputs.npm-setup-command }}
       - name: Check types
-        if: ${{ inputs.lint-check-types && always() }}
         run: npm run check-types
   test:
     runs-on: ubuntu-latest

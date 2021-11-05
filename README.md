@@ -28,9 +28,11 @@ Inputs:
   * Whether to run the `check-types` npm script. This should be set to `true`
     for TypeScript projects.
   * Default: `false`
+* **disable-tests**:
+  * Disable the test matrix.
+  * Default: `false`
 * **node-version-matrix**:
-  * Versions of Node.js to test on, as a JSON array. Can be set to `false` to
-    disable the test jobs.
+  * Versions of Node.js to test on, as a JSON array.
   * Default: `'[12, 14, 16]'`
 * **npm-test-command**:
   * Command used to run the tests.

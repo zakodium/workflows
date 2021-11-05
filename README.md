@@ -29,7 +29,8 @@ Inputs:
     for TypeScript projects.
   * Default: `false`
 * **node-version-matrix**:
-  * Versions of Node.js to test on, as a JSON array.
+  * Versions of Node.js to test on, as a JSON array. Can be set to `false` to
+    disable the test jobs.
   * Default: `'[12, 14, 16]'`
 * **npm-test-command**:
   * Command used to run the tests.

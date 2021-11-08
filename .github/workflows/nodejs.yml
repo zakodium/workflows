@@ -21,8 +21,8 @@ on:
         default: true
       lint-check-types:
         description: >
-          Whether to run the `check-types` npm script. This should be set to `true`
-          for TypeScript projects.
+          Whether to run the `check-types` npm script. This should be set to
+          `true` for TypeScript projects.
         type: boolean
         default: false
       disable-tests:
@@ -33,6 +33,11 @@ on:
         description: Versions of Node.js to test on, as a JSON array.
         type: string
         default: '[12, 14, 16]'
+      test-setup-command:
+        description: > 
+          Command used to setup the package before running npm tests. Will run
+          between `npm-setup-command` and `npm-test-command`.
+        type: string
       npm-test-command:
         description: Command used to run the tests.
         type: string
@@ -94,6 +99,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Setup package
         run: ${{ inputs.npm-setup-command }}
+      - name: Setup tests
+        if: ${{ inputs.test-setup-command }}
+        run: ${{ inputs.test-setup-command }}
       - name: Run tests
         run: ${{ inputs.npm-test-command }}
       - name: Send coverage report to Codecov

@@ -37,7 +37,7 @@ jobs:
           token: ${{ secrets.github-token }}
           release-type: node
           package-name: ${{ env.PACKAGE_NAME }}
-          bump-minor-pre-major: Yes
+          bump-minor-pre-major: true
   npm-publish:
     needs: release-please
     if: ${{ inputs.npm && needs.release-please.outputs.release_created }}

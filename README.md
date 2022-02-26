@@ -58,6 +58,7 @@ on:
 
 jobs:
   nodejs:
+    # Documentation: https://github.com/zakodium/workflows#nodejs-ci
     uses: zakodium/workflows/.github/workflows/nodejs.yml@nodejs-v1
     with:
       node-version-matrix: '[14, 16]'
@@ -99,6 +100,7 @@ on:
 
 jobs:
   release:
+    # Documentation: https://github.com/zakodium/workflows#release
     uses: zakodium/workflows/.github/workflows/release.yml@release-v1
     with:
       npm: true

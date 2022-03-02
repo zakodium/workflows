@@ -52,7 +52,7 @@ jobs:
     if: ${{ inputs.lint-eslint }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
@@ -64,7 +64,7 @@ jobs:
     if: ${{ inputs.lint-prettier }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
@@ -76,7 +76,7 @@ jobs:
     if: ${{ inputs.lint-check-types }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
@@ -92,7 +92,7 @@ jobs:
         node-version: ${{ fromJson(inputs.node-version-matrix) }}
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:

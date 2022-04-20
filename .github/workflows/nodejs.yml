@@ -32,7 +32,7 @@ on:
       node-version-matrix:
         description: Versions of Node.js to test on, as a JSON array.
         type: string
-        default: '[12, 14, 16]'
+        default: '[14, 16, 18]'
       test-setup-command:
         description: > 
           Command used to setup the package before running npm tests. Will run

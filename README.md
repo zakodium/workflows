@@ -113,7 +113,7 @@ jobs:
 
 This workflow allows to create an npm prerelease. The state of the repository
 will be published as-is, using `$currentVersion-pre-$epoch` as a version number
-and `head` as the npm dist-tag.
+and `pre` as the npm dist-tag.
 
 Inputs:
 

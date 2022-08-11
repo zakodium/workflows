@@ -1,4 +1,4 @@
-name: Release a Node.js package on npm with a prerelease version number (HEAD)
+name: Prerelease a Node.js package on npm
 
 on:
   workflow_call:
@@ -37,7 +37,7 @@ jobs:
       - name: Publish package to npm
         run: |
           npm version --no-git-tag-version $NPM_VERSION
-          npm publish --access public --tag head
+          npm publish --access public --tag pre
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
       - name: Post comment on GitHub

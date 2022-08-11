@@ -48,7 +48,9 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: 'https://registry.npmjs.org'
-      - run: ${{ inputs.npm-setup-command }}
-      - run: npm publish --access public
+      - name: Run npm setup command
+        run: ${{ inputs.npm-setup-command }}
+      - name: Publish package to npm
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}

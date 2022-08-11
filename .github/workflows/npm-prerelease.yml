@@ -43,7 +43,7 @@ jobs:
       - name: Post comment on GitHub
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          gh pr comment ${{ github.event.number }} - <<EOF
+          gh pr comment ${{ github.event.number }} --body-file - <<EOF
           Published prerelease version $NPM_VERSION to npm.
 
           To install it, run:

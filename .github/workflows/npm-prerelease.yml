@@ -28,8 +28,11 @@ jobs:
         run: |
           echo "PACKAGE_VERSION=$(jq .version package.json | tr -d '"')" >> $GITHUB_ENV
           echo "EPOCH=$EPOCHSECONDS" >> $GITHUB_ENV
-      - run: ${{ inputs.npm-setup-command }}
-      - run: npm version "${{ env.PACKAGE_VERSION }}-pre.${{ env.EPOCH }}"
-      - run: npm publish --access public --tag head
+      - name: Run npm setup command
+        run: ${{ inputs.npm-setup-command }}
+      - name: Publish package to npm
+        run: |
+          npm version --no-git-tag-version "${{ env.PACKAGE_VERSION }}-pre.${{ env.EPOCH }}"
+          npm publish --access public --tag head
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}

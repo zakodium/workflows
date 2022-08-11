@@ -33,7 +33,7 @@ Inputs:
   * Default: `false`
 * **node-version-matrix**:
   * Versions of Node.js to test on, as a JSON array.
-  * Default: `'[12, 14, 16]'`
+  * Default: `'[14, 16, 18]'`
 * **test-setup-command**:
   * Command used to setup the package before running npm tests. Will run
     between `npm-setup-command` and `npm-test-command`.

@@ -12,6 +12,8 @@ on:
         type: string
         default: npm install
     secrets:
+      github-token:
+        required: true
       npm-token:
         required: true
 
@@ -39,3 +41,5 @@ jobs:
       - name: Post comment on GitHub
         if: ${{ github.event_name == 'pull_request' }}
         run: gh pr comment ${{ github.event.number }} --body "Published prerelease version $NPM_VERSION to npm."
+        env:
+          GH_TOKEN: ${{ secrets.github-token }}

@@ -26,13 +26,16 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Get package version
         run: |
-          echo "PACKAGE_VERSION=$(jq .version package.json | tr -d '"')" >> $GITHUB_ENV
-          echo "EPOCH=$EPOCHSECONDS" >> $GITHUB_ENV
+          PACKAGE_VERSION=$(jq .version package.json | tr -d '"')
+          echo "NPM_VERSION=$PACKAGE_VERSION-pre.$EPOCHSECONDS" >> $GITHUB_ENV
       - name: Run npm setup command
         run: ${{ inputs.npm-setup-command }}
       - name: Publish package to npm
         run: |
-          npm version --no-git-tag-version "${{ env.PACKAGE_VERSION }}-pre.${{ env.EPOCH }}"
+          npm version --no-git-tag-version $NPM_VERSION
           npm publish --access public --tag head
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+      - name: Post comment on GitHub
+        if: ${{ github.event_name == 'pull_request' }}
+        run: gh pr comment ${{ github.event.number }} --body "Published prerelease version $NPM_VERSION to npm."

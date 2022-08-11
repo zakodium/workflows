@@ -48,9 +48,9 @@ jobs:
 
           To install it, run:
 
-          ```sh
+          \`\`\`sh
           npm install $PACKAGE_NAME@$NPM_VERSION
-          ```
+          \`\`\`
 
           EOF
         env:

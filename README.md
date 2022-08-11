@@ -108,3 +108,35 @@ jobs:
       github-token: ${{ secrets.BOT_TOKEN }}
       npm-token: ${{ secrets.NPM_BOT_TOKEN }}
 ````
+
+### npm prerelease
+
+This workflow allows to create an npm prerelease. The state of the repository
+will be published as-is, using `$currentVersion-pre-$epoch` as a version number
+and `head` as the npm dist-tag.
+
+Inputs:
+
+* **node-version**:
+  * Version of Node.js used to run the npm publish steps.
+  * Default: `16.x`
+* **npm-setup-command**:
+  * Command used to setup the package before publishing to npm.
+  * Default: `npm install`
+
+Example usage:
+
+````yml
+name: Prerelease pull requests on npm
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  prerelease:
+    # Documentation: https://github.com/zakodium/workflows#npm-prerelease
+    uses: zakodium/workflows/.github/workflows/npm-prerelease.yml@npm-prerelease-v1
+    secrets:
+      npm-token: ${{ secrets.NPM_BOT_TOKEN }}
+````

@@ -1,0 +1,35 @@
+name: Release a Node.js package on npm with a prerelease version number (HEAD)
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Version of Node.js used to run the npm publish steps.
+        type: string
+        default: 16.x
+      npm-setup-command:
+        description: Command used to setup the package before publishing to npm.
+        type: string
+        default: npm install
+    secrets:
+      npm-token:
+        required: true
+
+jobs:
+  npm-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+      - name: Get package version
+        run: |
+          echo "PACKAGE_VERSION=$(jq .version package.json | tr -d '"')" >> $GITHUB_ENV
+          echo "EPOCH=$EPOCHSECONDS" >> $GITHUB_ENV
+      - run: ${{ inputs.npm-setup-command }}
+      - run: npm version "${{ env.PACKAGE_VERSION }}-pre.${{ env.EPOCH }}"
+      - run: npm publish --access public --tag head
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}

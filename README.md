@@ -131,7 +131,7 @@ Inputs:
 Example usage:
 
 ````yml
-name: Prerelease pull requests on npm
+name: Prerelease package on npm
 
 on:
   pull_request:

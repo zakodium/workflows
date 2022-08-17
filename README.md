@@ -4,6 +4,10 @@ Shared reusable GitHub workflows.
 
 ## Available workflows
 
+* [`nodejs` (Node.js CI)](#nodejs-ci)
+* [`release`](#release)
+* [`npm-prerelease`](#npm-prerelease)
+
 ### Node.js CI
 
 Generic workflow to run linters and tests for Node.js projects. It supports `eslint`,
@@ -131,6 +135,7 @@ name: Prerelease pull requests on npm
 
 on:
   pull_request:
+    types: [labeled]
   workflow_dispatch:
 
 jobs:

@@ -20,7 +20,19 @@ on:
         required: true
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      ignore: ${{ steps.validation.outputs.ignore }}
+    steps:
+      - id: validation
+        name: Validation of the event
+        # Ignore labeling events with a label other than 'npm-prerelease'
+        if: ${{ github.event.label.name && github.event.label.name != 'npm-prerelease' }}
+        run: echo "::set-output name=ignore::true"
   npm-publish:
+    needs: prepare
+    if: ${{ !needs.prepare.outputs.ignore }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -42,11 +54,17 @@ jobs:
           npm publish --access public --tag pre
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+      - name: Remove label
+        if: ${{ github.event_name == 'pull_request' && github.event.label.name }}
+        run: |
+          gh pr edit ${{ github.event.number }} --remove-label ${{ github.event.label.name }}
+        env:
+          GH_TOKEN: ${{ secrets.github-token }}
       - name: Post comment on GitHub
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           gh pr comment ${{ github.event.number }} --body-file - <<EOF
-          Published prerelease version $NPM_VERSION to npm.
+          Published prerelease version \`$NPM_VERSION\` to npm.
 
           To install it, run:
 

@@ -7,45 +7,55 @@ on:
         description: Version of Node.js used to run the lint steps.
         type: string
         default: 16.x
+        required: false
       npm-setup-command:
         description: Command used to setup the package before running other steps.
         type: string
         default: npm install
+        required: false
       lint-eslint:
         description: Whether to run the `eslint` npm script.
         type: boolean
         default: true
+        required: false
       lint-prettier:
         description: Whether to run the `prettier` npm script.
         type: boolean
         default: true
+        required: false
       lint-check-types:
         description: >
           Whether to run the `check-types` npm script. This should be set to
           `true` for TypeScript projects.
         type: boolean
         default: false
+        required: false
       disable-tests:
         description: Disable the test matrix.
         type: boolean
         default: false
+        required: false
       node-version-matrix:
         description: Versions of Node.js to test on, as a JSON array.
         type: string
         default: '[14, 16, 18]'
+        required: false
       test-setup-command:
         description: > 
           Command used to setup the package before running npm tests. Will run
           between `npm-setup-command` and `npm-test-command`.
         type: string
+        required: false
       npm-test-command:
         description: Command used to run the tests.
         type: string
         default: npm run test-only
+        required: false
       upload-coverage:
         description: Whether to run the Codecov action to upload coverage data.
         type: boolean
         default: true
+        required: false
 
 jobs:
   lint-eslint:

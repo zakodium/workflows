@@ -9,14 +9,17 @@ on:
           npm-token secret in that case.
         type: boolean
         default: false
+        required: false
       node-version:
         description: Version of Node.js used to run the npm publish steps.
         type: string
         default: 16.x
+        required: false
       npm-setup-command:
         description: Command used to setup the package before publishing to npm.
         type: string
         default: npm install
+        required: false
     secrets:
       github-token:
         required: true

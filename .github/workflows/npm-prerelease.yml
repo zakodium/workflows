@@ -69,7 +69,7 @@ jobs:
           To install it, run:
 
           \`\`\`sh
-          npm install $PACKAGE_NAME@$NPM_VERSION
+          npm install --save-exact $PACKAGE_NAME@$NPM_VERSION
           \`\`\`
 
           EOF

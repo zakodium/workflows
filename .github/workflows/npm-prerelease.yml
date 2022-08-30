@@ -27,8 +27,9 @@ jobs:
     steps:
       - id: validation
         name: Validation of the event
+        # Only support workflow_dispatch and labeled pull requests to reduce security risk.
         # Ignore labeling events with a label other than 'npm-prerelease'
-        if: ${{ github.event.label.name && github.event.label.name != 'npm-prerelease' }}
+        if: ${{ (github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch') || (github.event_name == 'pull_request' && github.event.action != 'labeled') || (github.event.action == 'labeled' && github.event.label.name != 'npm-prerelease') }}
         run: echo "::set-output name=ignore::true"
   npm-publish:
     needs: prepare

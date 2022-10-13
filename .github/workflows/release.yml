@@ -41,6 +41,7 @@ jobs:
           release-type: node
           package-name: ${{ env.PACKAGE_NAME }}
           bump-minor-pre-major: true
+          changelog-types: '[{"type":"feat","section":"Features"},{"type":"fix","section":"Bug Fixes"},{"type":"perf","section":"Performance Improvements"},{"type":"revert","section":"Reverts"},{"type":"docs","section":"Documentation"},{"type":"chore","section":"Miscellaneous Chores","hidden":true},{"type":"refactor","section":"Code Refactoring","hidden":true},{"type":"test","section":"Tests","hidden":true},{"type":"build","section":"Build System","hidden":true},{"type":"ci","section":"Continuous Integration","hidden":true}]'
   npm-publish:
     needs: release-please
     if: ${{ inputs.npm && needs.release-please.outputs.release_created }}

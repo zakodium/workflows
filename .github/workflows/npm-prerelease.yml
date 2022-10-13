@@ -23,17 +23,17 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      ignore: ${{ steps.validation.outputs.ignore }}
+      continue: ${{ steps.validation.outputs.continue }}
     steps:
       - id: validation
         name: Validation of the event
         # Only support workflow_dispatch and labeled pull requests to reduce security risk.
         # Ignore labeling events with a label other than 'npm-prerelease'
-        if: ${{ (github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch') || (github.event_name == 'pull_request' && github.event.action != 'labeled') || (github.event.action == 'labeled' && github.event.label.name != 'npm-prerelease') }}
-        run: echo "::set-output name=ignore::true"
+        if: ${{ (github.event_name == 'pull_request' && github.event.action == 'labeled' && github.event.label.name == 'npm-prerelease') || (github.event_name == 'workflow_dispatch') }}
+        run: echo "continue=true" >> $GITHUB_OUTPUT
   npm-publish:
     needs: prepare
-    if: ${{ !needs.prepare.outputs.ignore }}
+    if: ${{ !needs.prepare.outputs.continue }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

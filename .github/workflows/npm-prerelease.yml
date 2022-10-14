@@ -33,14 +33,14 @@ jobs:
         run: echo "continue=true" >> $GITHUB_OUTPUT
   npm-publish:
     needs: prepare
-    if: ${{ !needs.prepare.outputs.continue }}
+    if: ${{ needs.prepare.outputs.continue }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - name: Get package version
         run: |
           PACKAGE_NAME=$(jq .name package.json | tr -d '"')

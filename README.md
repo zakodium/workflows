@@ -142,5 +142,6 @@ jobs:
     # Documentation: https://github.com/zakodium/workflows#npm-prerelease
     uses: zakodium/workflows/.github/workflows/npm-prerelease.yml@npm-prerelease-v1
     secrets:
+      github-token: ${{ secrets.BOT_TOKEN }}
       npm-token: ${{ secrets.NPM_BOT_TOKEN }}
 ````

@@ -38,7 +38,7 @@ on:
       node-version-matrix:
         description: Versions of Node.js to test on, as a JSON array.
         type: string
-        default: '[14, 16, 18, 19]'
+        default: '[14, 16, 18, 20]'
         required: false
       test-setup-command:
         description: > 

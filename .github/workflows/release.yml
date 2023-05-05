@@ -18,7 +18,7 @@ on:
       npm-setup-command:
         description: Command used to setup the package before publishing to npm.
         type: string
-        default: npm install
+        default: <auto>
         required: false
     secrets:
       github-token:
@@ -31,7 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
+      npm-final-setup-command: ${{ steps.get-command.outputs.npm-final-setup-command }}
     steps:
+      - uses: actions/checkout@v3
       - name: Get package name
         run: echo "PACKAGE_NAME=$(jq .name package.json | tr -d '"')" >> $GITHUB_ENV
       - uses: google-github-actions/release-please-action@v3
@@ -42,18 +44,33 @@ jobs:
           package-name: ${{ env.PACKAGE_NAME }}
           bump-minor-pre-major: true
           changelog-types: '[{"type":"feat","section":"Features"},{"type":"fix","section":"Bug Fixes"},{"type":"perf","section":"Performance Improvements"},{"type":"revert","section":"Reverts"},{"type":"docs","section":"Documentation"},{"type":"chore","section":"Miscellaneous Chores","hidden":true},{"type":"refactor","section":"Code Refactoring","hidden":true},{"type":"test","section":"Tests","hidden":true},{"type":"build","section":"Build System","hidden":true},{"type":"ci","section":"Continuous Integration","hidden":true}]'
+      - name: Get npm setup command
+        id: get-command
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          SETUP_COMMAND="${{ inputs.npm-setup-command }}"
+          if [ "$SETUP_COMMAND" = "<auto>" ]; then
+            if [ -f "package-lock.json" ]; then
+              SETUP_COMMAND="npm ci"
+            else
+              SETUP_COMMAND="npm install"
+            fi
+          fi
+          echo "npm-final-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
   npm-publish:
     needs: release-please
     if: ${{ inputs.npm && needs.release-please.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: 'https://registry.npmjs.org'
       - name: Run npm setup command
-        run: ${{ inputs.npm-setup-command }}
+        run: ${{ needs.release-please.outputs.npm-final-setup-command }}
       - name: Publish package to npm
         run: npm publish --access public
         env:

@@ -11,7 +11,7 @@ on:
       npm-setup-command:
         description: Command used to setup the package before publishing to npm.
         type: string
-        default: npm install
+        default: <auto>
         required: false
     secrets:
       github-token:
@@ -24,19 +24,39 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       continue: ${{ steps.validation.outputs.continue }}
+      npm-final-setup-command: ${{ steps.get-command.outputs.npm-final-setup-command }}
     steps:
-      - id: validation
-        name: Validation of the event
+      - name: Validation of the event
+        id: validation
         # Only support workflow_dispatch and labeled pull requests to reduce security risk.
         # Ignore labeling events with a label other than 'npm-prerelease'
         if: ${{ (github.event_name == 'pull_request' && github.event.action == 'labeled' && github.event.label.name == 'npm-prerelease') || (github.event_name == 'workflow_dispatch') }}
         run: echo "continue=true" >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v3
+        if: ${{ steps.validation.outputs.continue }}
+        with:
+          fetch-depth: 0
+      - name: Get npm setup command
+        id: get-command
+        if: ${{ steps.validation.outputs.continue }}
+        run: |
+          SETUP_COMMAND="${{ inputs.npm-setup-command }}"
+          if [ "$SETUP_COMMAND" = "<auto>" ]; then
+            if [ -f "package-lock.json" ]; then
+              SETUP_COMMAND="npm ci"
+            else
+              SETUP_COMMAND="npm install"
+            fi
+          fi
+          echo "npm-final-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
   npm-publish:
     needs: prepare
     if: ${{ needs.prepare.outputs.continue }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
@@ -48,7 +68,7 @@ jobs:
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
           echo "NPM_VERSION=$PACKAGE_VERSION-pre.$EPOCHSECONDS" >> $GITHUB_ENV
       - name: Run npm setup command
-        run: ${{ inputs.npm-setup-command }}
+        run: ${{ needs.prepare.outputs.npm-final-setup-command }}
       - name: Publish package to npm
         run: |
           npm version --no-git-tag-version $NPM_VERSION

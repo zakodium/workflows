@@ -21,7 +21,7 @@ Inputs:
   * Default: `16.x`
 * **npm-setup-command**:
   * Command used to setup the package before running other steps.
-  * Default: `npm install`
+  * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 * **lint-eslint**:
   * Whether to run the `eslint` npm script.
   * Default: `true`
@@ -89,7 +89,7 @@ Inputs:
   * Default: `16.x`
 * **npm-setup-command**:
   * Command used to setup the package before publishing to npm.
-  * Default: `npm install`
+  * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 
 Example usage:
 
@@ -125,7 +125,7 @@ Inputs:
   * Default: `16.x`
 * **npm-setup-command**:
   * Command used to setup the package before publishing to npm.
-  * Default: `npm install`
+  * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 
 Example usage:
 

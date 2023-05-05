@@ -66,7 +66,8 @@ jobs:
           # First increment the patch version number, then add the epoch seconds as a prerelease version.
           npm version --no-git-tag-version patch
           PACKAGE_VERSION=$(jq .version package.json | tr -d '"')
-          echo "NPM_VERSION=$PACKAGE_VERSION-pre.$EPOCHSECONDS" >> $GITHUB_ENV
+          NPM_VERSION=$PACKAGE_VERSION-pre.$EPOCHSECONDS
+          echo "NPM_VERSION=$NPM_VERSION" >> $GITHUB_ENV
           npm version --no-git-tag-version $NPM_VERSION
       - name: Publish package to npm
         run: npm publish --access public --tag pre

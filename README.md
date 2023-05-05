@@ -37,11 +37,11 @@ Inputs:
   * Default: `false`
 * **node-version-matrix**:
   * Versions of Node.js to test on, as a JSON array.
-  * Default: `'[14, 16, 18, 20]'`
+  * Default: `'[16, 18, 20]'`
 * **test-setup-command**:
   * Command used to setup the package before running npm tests. Will run
     between `npm-setup-command` and `npm-test-command`.
-  * Default: Nothing.
+  * Default: `undefined`
 * **npm-test-command**:
   * Command used to run the tests.
   * Default: `npm run test-only`
@@ -49,8 +49,8 @@ Inputs:
   * Whether to run the Codecov action to upload coverage data.
   * Default: `true`
 
-Example usage:
-
+Example usage for a TypeScript project:
+  
 ```yml
 name: Node.js CI
 

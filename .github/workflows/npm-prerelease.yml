@@ -34,6 +34,14 @@ jobs:
         run: echo "continue=true" >> $GITHUB_OUTPUT
       - uses: actions/checkout@v3
         if: ${{ steps.validation.outputs.continue }}
+      - name: Fail if package is scoped
+        if: ${{ steps.validation.outputs.continue }}
+        run: |
+          PACKAGE_NAME=$(jq .name package.json | tr -d '"')
+          if [[ $PACKAGE_NAME == @* ]]; then
+            echo "Scoped packages are not supported for security reasons." 1>&2
+            exit 1;
+          fi
       - name: Get npm setup command
         id: get-command
         if: ${{ steps.validation.outputs.continue }}

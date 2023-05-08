@@ -20,6 +20,15 @@ on:
         type: string
         default: <auto>
         required: false
+      public:
+        description: >
+          This option only affects scoped packages.
+          Whether the package will be published to the public npm registry. If `false`,
+          the package will be published only to the GitHub Package Registry (GPR).
+          When publishing to GPR, the `github-token` must also have the `write:packages` scope.
+        type: boolean
+        default: false
+        required: false
     secrets:
       github-token:
         required: true
@@ -32,6 +41,8 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       npm-final-setup-command: ${{ steps.get-command.outputs.npm-final-setup-command }}
+      publish_github: ${{ steps.extract-registries.outputs.publish_github }}
+      publish_npm: ${{ steps.extract-registries.outputs.publish_npm }}
     steps:
       - uses: actions/checkout@v3
       - name: Get package name
@@ -57,19 +68,58 @@ jobs:
             fi
           fi
           echo "npm-final-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
-  npm-publish:
+      - name: Extract registries to publish
+        id: extract-registries
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          IS_PUBLIC: ${{ inputs.public }}
+        run: |
+          # If the PACKAGE_NAME starts with @, it's a scoped package.
+          # In that case, we need to publish to the GitHub Package Registry and
+          # optionally to the public npm registry (when IS_PUBLIC is true).
+          if [[ $PACKAGE_NAME == @* ]]; then
+            if [ "$IS_PUBLIC" = "true" ]; then
+              echo "publish_github=true" >> $GITHUB_OUTPUT
+              echo "publish_npm=true" >> $GITHUB_OUTPUT
+            else
+              echo "publish_github=true" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "publish_npm=true" >> $GITHUB_OUTPUT
+          fi
+  publish-package:
     needs: release-please
-    if: ${{ inputs.npm && needs.release-please.outputs.release_created }}
+    if: ${{ needs.release-please.outputs.release_created && inputs.npm && (needs.release-please.outputs.publish_npm=='true' || needs.release-please.outputs.publish_github=='true') }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: npm
+            enabled: ${{ needs.release-please.outputs.publish_npm=='true' }}
+            registry-url: 'https://registry.npmjs.org'
+          - id: github
+            enabled: ${{ needs.release-please.outputs.publish_github=='true' }}
+            registry-url: 'https://npm.pkg.github.com'
+    name: publish-package-${{ matrix.id }}
     steps:
       - uses: actions/checkout@v3
+        if: ${{ matrix.enabled }}
       - uses: actions/setup-node@v3
+        if: ${{ matrix.enabled }}
         with:
           node-version: ${{ inputs.node-version }}
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: ${{ matrix.registry-url }}
       - name: Run npm setup command
+        if: ${{ matrix.enabled }}
         run: ${{ needs.release-please.outputs.npm-final-setup-command }}
       - name: Publish package to npm
+        if: ${{ matrix.enabled && matrix.id=='npm' }}
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+      - name: Publish package to GitHub Package Registry
+        if: ${{ matrix.enabled && matrix.id=='github' }}
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.github-token }}

@@ -76,7 +76,7 @@ The release workflow helps to automatically release packages that conform the
 It uses the [Release Please Action](https://github.com/google-github-actions/release-please-action#release-please-action)
 to maintain a release pull request. When the pull request is merged, the changelog
 is updated and a release is created in GitHub. Additionally, it is possible to
-publish the package on the npm registry.
+publish the package to the npm and GitHub package registries.
 
 Inputs:
 
@@ -90,6 +90,12 @@ Inputs:
 * **npm-setup-command**:
   * Command used to setup the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
+* **public**:
+  * This option only affects scoped packages.
+    Whether the package will be published to the public npm registry. If `false`,
+    the package will be published only to the GitHub Package Registry (GPR).
+    When publishing to GPR, the `github-token` must also have the `write:packages` scope.
+  * Default: `false`
 
 Example usage:
 
@@ -116,7 +122,8 @@ jobs:
 
 This workflow allows to create an npm prerelease. The state of the repository
 will be published as-is, using `$currentVersion-pre-$epoch` as a version number
-and `pre` as the npm dist-tag.
+and `pre` as the npm dist-tag. Scoped packages are not supported for security
+reasons.
 
 Inputs:
 

@@ -44,7 +44,7 @@ jobs:
       publish_github: ${{ steps.extract-registries.outputs.publish_github }}
       publish_npm: ${{ steps.extract-registries.outputs.publish_npm }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get package name
         run: echo "PACKAGE_NAME=$(jq .name package.json | tr -d '"')" >> $GITHUB_ENV
       - uses: google-github-actions/release-please-action@v3
@@ -103,7 +103,7 @@ jobs:
             registry-url: 'https://npm.pkg.github.com'
     name: publish-package-${{ matrix.id }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ matrix.enabled }}
       - uses: actions/setup-node@v3
         if: ${{ matrix.enabled }}

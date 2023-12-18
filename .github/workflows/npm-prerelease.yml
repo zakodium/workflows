@@ -6,7 +6,7 @@ on:
       node-version:
         description: Version of Node.js used to run the npm publish steps.
         type: string
-        default: 16.x
+        default: 20.x
         required: false
       npm-setup-command:
         description: Command used to setup the package before publishing to npm.
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: "https://registry.npmjs.org"

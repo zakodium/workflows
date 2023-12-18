@@ -18,7 +18,7 @@ Inputs:
 
 * **node-version**:
   * Version of Node.js used to run the lint steps.
-  * Default: `16.x`
+  * Default: `20.x`
 * **npm-setup-command**:
   * Command used to setup the package before running other steps.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
@@ -37,7 +37,7 @@ Inputs:
   * Default: `false`
 * **node-version-matrix**:
   * Versions of Node.js to test on, as a JSON array.
-  * Default: `'[16, 18, 20, 21]'`
+  * Default: `'[18, 20, 21]'`
 * **test-setup-command**:
   * Command used to setup the package before running npm tests. Will run
     between `npm-setup-command` and `npm-test-command`.
@@ -86,7 +86,7 @@ Inputs:
   * Default: `false`
 * **node-version**:
   * Version of Node.js used to run the npm publish steps.
-  * Default: `16.x`
+  * Default: `20.x`
 * **npm-setup-command**:
   * Command used to setup the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
@@ -129,7 +129,7 @@ Inputs:
 
 * **node-version**:
   * Version of Node.js used to run the npm publish steps.
-  * Default: `16.x`
+  * Default: `20.x`
 * **npm-setup-command**:
   * Command used to setup the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.

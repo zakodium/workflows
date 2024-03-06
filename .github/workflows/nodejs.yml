@@ -52,9 +52,14 @@ on:
         default: npm run test-only
         required: false
       upload-coverage:
-        description: Whether to run the Codecov action to upload coverage data.
+        description: >
+          Whether to run the Codecov action to upload coverage data.
+          This requires to pass the `codecov-token` secret.
         type: boolean
-        default: true
+        default: false
+        required: false
+    secrets:
+      codecov-token:
         required: false
 
 jobs:
@@ -77,6 +82,13 @@ jobs:
             fi
           fi
           echo "npm-final-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
+      - name: Check codecov token
+        if: ${{ inputs.upload-coverage }}
+        run: |
+          if [ "${{ secrets.codecov-token }}" = "" ]; then
+            echo "The 'codecov-token' secret must be passed in order to upload coverage data."
+            exit 1
+          fi
   lint-eslint:
     if: ${{ inputs.lint-eslint }}
     needs: prepare
@@ -139,4 +151,7 @@ jobs:
         run: ${{ inputs.npm-test-command }}
       - name: Send coverage report to Codecov
         if: ${{ inputs.upload-coverage }}
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.codecov-token }}

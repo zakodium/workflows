@@ -47,7 +47,8 @@ Inputs:
   * Default: `npm run test-only`
 * **upload-coverage**:
   * Whether to run the Codecov action to upload coverage data.
-  * Default: `true`
+    This requires to pass the `codecov-token` secret.
+  * Default: `false`
 
 Example usage for a TypeScript project:
   
@@ -66,6 +67,9 @@ jobs:
     uses: zakodium/workflows/.github/workflows/nodejs.yml@nodejs-v1
     with:
       lint-check-types: true
+      upload-coverage: true
+    secrets:
+      codecov-token: ${{ secrets.CODECOV_TOKEN }}
 ```
 
 ### Release

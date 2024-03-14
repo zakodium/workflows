@@ -38,6 +38,7 @@ on:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       npm-final-setup-command: ${{ steps.get-command.outputs.npm-final-setup-command }}
@@ -88,6 +89,7 @@ jobs:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created && inputs.npm && (needs.release-please.outputs.publish_npm=='true' || needs.release-please.outputs.publish_github=='true') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:

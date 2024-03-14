@@ -66,6 +66,7 @@ jobs:
   prepare:
     if: ${{ inputs.lint-eslint || inputs.lint-prettier || inputs.lint-check-types || !inputs.disable-tests }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       npm-final-setup-command: ${{ steps.get-command.outputs.npm-final-setup-command }}
     steps:
@@ -93,6 +94,7 @@ jobs:
     if: ${{ inputs.lint-eslint }}
     needs: prepare
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -106,6 +108,7 @@ jobs:
     if: ${{ inputs.lint-prettier }}
     needs: prepare
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -119,6 +122,7 @@ jobs:
     if: ${{ inputs.lint-check-types }}
     needs: prepare
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -132,6 +136,7 @@ jobs:
     if: ${{ !inputs.disable-tests }}
     needs: prepare
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         node-version: ${{ fromJson(inputs.node-version-matrix) }}

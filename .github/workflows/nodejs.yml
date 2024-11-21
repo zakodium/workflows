@@ -54,9 +54,9 @@ on:
       upload-coverage:
         description: >
           Whether to run the Codecov action to upload coverage data.
-          This requires to pass the `codecov-token` secret.
-        type: boolean
-        default: false
+          This requires to pass the `codecov-token` secret for private repos.
+        type: string
+        default: <auto>
         required: false
     secrets:
       codecov-token:
@@ -68,7 +68,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      npm-final-setup-command: ${{ steps.get-command.outputs.npm-final-setup-command }}
+      final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
+      final-upload-coverage: ${{ steps.check-codecov.outputs.final-upload-coverage }}
     steps:
       - uses: actions/checkout@v4
       - name: Get npm setup command
@@ -82,14 +83,26 @@ jobs:
               SETUP_COMMAND="npm install"
             fi
           fi
-          echo "npm-final-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
-      - name: Check codecov token
-        if: ${{ inputs.upload-coverage }}
+          echo "final-npm-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
+      - name: Check Codecov settings
+        id: check-codecov
         run: |
-          if [ "${{ secrets.codecov-token }}" = "" ]; then
-            echo "The 'codecov-token' secret must be passed in order to upload coverage data."
+          UPLOAD_COVERAGE="${{ inputs.upload-coverage }}"
+          REPO_VISIBILITY=$(gh repo view --json visibility -q .visibility || echo "NOT_FOUND")
+          echo "Repository visibility is $REPO_VISIBILITY"
+          if [ "$UPLOAD_COVERAGE" = "<auto>" ]; then
+            if [ "$REPO_VISIBILITY" = "PUBLIC" ]; then
+              UPLOAD_COVERAGE="true"
+            else
+              UPLOAD_COVERAGE="false"
+            fi
+          fi
+          echo "Upload coverage set to $UPLOAD_COVERAGE"
+          if [ "$REPO_VISIBILITY" != "PUBLIC" ] && [ "$UPLOAD_COVERAGE" = "true" ] && [ "${{ secrets.codecov-token }}" = "" ]; then
+            echo "The 'codecov-token' secret must be passed in order to upload coverage data for private repositories."
             exit 1
           fi
+          echo "final-upload-coverage=$UPLOAD_COVERAGE" >> $GITHUB_OUTPUT
   lint-eslint:
     if: ${{ inputs.lint-eslint }}
     needs: prepare
@@ -101,7 +114,7 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
       - name: Run npm setup command
-        run: ${{ needs.prepare.outputs.npm-final-setup-command }}
+        run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Run ESLint
         run: npm run eslint
   lint-prettier:
@@ -115,7 +128,7 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
       - name: Run npm setup command
-        run: ${{ needs.prepare.outputs.npm-final-setup-command }}
+        run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Run Prettier
         run: npm run prettier
   lint-check-types:
@@ -129,7 +142,7 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
       - name: Run npm setup command
-        run: ${{ needs.prepare.outputs.npm-final-setup-command }}
+        run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Check types
         run: npm run check-types
   test:
@@ -148,15 +161,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Run npm setup command
-        run: ${{ needs.prepare.outputs.npm-final-setup-command }}
+        run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Run test setup command
         if: ${{ inputs.test-setup-command }}
         run: ${{ inputs.test-setup-command }}
       - name: Run tests
         run: ${{ inputs.npm-test-command }}
       - name: Send coverage report to Codecov
-        if: ${{ inputs.upload-coverage }}
-        uses: codecov/codecov-action@v4
+        if: ${{ needs.prepare.outputs.final-upload-coverage == "true" }}
+        uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
           token: ${{ secrets.codecov-token }}

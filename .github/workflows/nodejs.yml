@@ -103,6 +103,8 @@ jobs:
             exit 1
           fi
           echo "final-upload-coverage=$UPLOAD_COVERAGE" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
   lint-eslint:
     if: ${{ inputs.lint-eslint }}
     needs: prepare

@@ -52,7 +52,6 @@ jobs:
         id: release
         with:
           token: ${{ secrets.github-token }}
-          release-type: node
       - name: Get npm setup command
         id: get-command
         if: ${{ steps.release.outputs.release_created }}

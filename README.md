@@ -97,6 +97,10 @@ Inputs:
     the package will be published only to the GitHub Package Registry (GPR).
     When publishing to GPR, the `github-token` must also have the `write:packages` scope.
   * Default: `false`
+* **release-type**:
+  * Option passed to the [release-please action](https://github.com/googleapis/release-please-action?tab=readme-ov-file#release-types-supported).
+    Set to the empty string to use a [release manifest config](https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md).
+  * Default: `node`
 
 Example usage:
 

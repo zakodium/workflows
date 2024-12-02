@@ -29,6 +29,13 @@ on:
         type: boolean
         default: false
         required: false
+      release-type:
+        description: >
+          Option passed to the release-please action.
+          Set to the empty string to use a release manifest config.
+        type: string
+        default: node
+        required: false
     secrets:
       github-token:
         required: true
@@ -52,6 +59,7 @@ jobs:
         id: release
         with:
           token: ${{ secrets.github-token }}
+          release-type: ${{ inputs.release-type }}
       - name: Get npm setup command
         id: get-command
         if: ${{ steps.release.outputs.release_created }}

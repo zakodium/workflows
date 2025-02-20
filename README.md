@@ -14,7 +14,7 @@ Generic workflow to run linters and tests for Node.js projects. It supports `esl
 `prettier`, and `check-types` linter steps and will run tests using a matrix of
 Node.js versions.
 
-Inputs:
+#### Inputs
 
 * **node-version**:
   * Version of Node.js used to run the lint steps.
@@ -50,6 +50,16 @@ Inputs:
     This requires to pass the `codecov-token` secret for private repos.
   * Default: `true` for public repos and `false` for private repos.
 
+#### Secrets
+
+* **codecov-token**
+  A token for code coverage uploads.
+  Necessary for private repos and public repos if the organization hasn't enabled [tokenless uploads](https://docs.codecov.com/docs/codecov-tokens#uploading-without-a-token).
+* **env**
+  Environment variables necessary to run the tests.
+  Must be passed with the `KEY=value` format (one per line).
+  Values will be automatically treated as secrets and redacted from the logs.
+
 Example usage for a TypeScript project:
   
 ```yml
@@ -79,7 +89,7 @@ to maintain a release pull request. When the pull request is merged, the changel
 is updated and a release is created in GitHub. Additionally, it is possible to
 publish the package to the npm and GitHub package registries.
 
-Inputs:
+#### Inputs
 
 * **npm**:
   * Pass `true` to enable the npm publish steps. In that case, the `npm-token`
@@ -130,7 +140,7 @@ will be published as-is, using `$currentVersion-pre-$epoch` as a version number
 and `pre` as the npm dist-tag. Scoped packages are not supported for security
 reasons.
 
-Inputs:
+#### Inputs
 
 * **node-version**:
   * Version of Node.js used to run the npm publish steps.

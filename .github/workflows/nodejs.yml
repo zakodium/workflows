@@ -61,6 +61,8 @@ on:
     secrets:
       codecov-token:
         required: false
+      env:
+        required: false
 
 jobs:
   prepare:
@@ -162,6 +164,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Setup env from secrets
+        run: |
+          # Skip if secrets.env is not set
+          if [ -z "${{ secrets.env }}" ]; then
+              echo "No env secrets"
+              exit 0
+          fi
+          # For each line in secrets.env, split by '=', mask the value and set the env variable for the job.
+          while IFS= read -r line; do
+              key=$(echo $line | cut -d'=' -f1)
+              value=$(echo $line | cut -d'=' -f2)
+              # Skip line if key or value is empty
+              if [ -z "$key" ] || [ -z "$value" ]; then
+                  continue
+              fi
+              echo "Setting $key"
+              echo "::add-mask::$value"
+              echo "$key=$value" >> $GITHUB_ENV
+          done <<< "${{ secrets.env }}"
       - name: Run npm setup command
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Run test setup command

@@ -175,6 +175,10 @@ jobs:
           while IFS= read -r line; do
               key=$(echo $line | cut -d'=' -f1)
               value=$(echo $line | cut -d'=' -f2)
+              # Skip line if key or value is empty
+              if [ -z "$key" ] || [ -z "$value" ]; then
+                  continue
+              fi
               echo "Setting $key"
               echo "::add-mask::$value"
               echo "$key=$value" >> $GITHUB_ENV

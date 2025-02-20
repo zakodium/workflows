@@ -165,7 +165,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Setup env from secrets
-        if: ${{ secrets.env }}
         run: echo "${{ secrets.env }}" >> $GITHUB_ENV
       - name: Run npm setup command
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}

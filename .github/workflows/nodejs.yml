@@ -165,7 +165,20 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Setup env from secrets
-        run: echo "${{ secrets.env }}" >> $GITHUB_ENV
+        run: |
+          # Skip if secrets.env is not set
+          if [ -z "${{ secrets.env }}" ]; then
+              echo "No env secrets"
+              exit 0
+          fi
+          # For each line in secrets.env, split by '=', mask the value and set the env variable for the job.
+          while IFS= read -r line; do
+              key=$(echo $line | cut -d'=' -f1)
+              value=$(echo $line | cut -d'=' -f2)
+              echo "Setting $key"
+              echo "::add-mask::$value"
+              echo "$key=$value" >> $GITHUB_ENV
+          done <<< "${{ secrets.env }}"
       - name: Run npm setup command
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Run test setup command

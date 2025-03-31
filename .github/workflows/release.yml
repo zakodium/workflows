@@ -36,11 +36,21 @@ on:
         type: string
         default: node
         required: false
+      working-directory:
+        description: >
+          Usefully for monorepos. Set the working directory to run the steps in.
+        type: string
+        default: .
+        required: false
     secrets:
       github-token:
         required: true
       npm-token:
         required: false
+
+defaults:
+  run:
+    working-directory: ${{ inputs.working-directory }}
 
 jobs:
   release-please:

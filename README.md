@@ -49,6 +49,9 @@ Node.js versions.
   * Whether to run the Codecov action to upload coverage data.
     This requires to pass the `codecov-token` secret for private repos.
   * Default: `true` for public repos and `false` for private repos.
+* **working-directory**:
+  * Usefully for monorepos. Set the working directory to run the steps in.
+  * Default: `.`.
 
 #### Secrets
 
@@ -111,6 +114,9 @@ publish the package to the npm and GitHub package registries.
   * Option passed to the [release-please action](https://github.com/googleapis/release-please-action?tab=readme-ov-file#release-types-supported).
     Set to the empty string to use a [release manifest config](https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md).
   * Default: `node`
+* **working-directory**:
+  * Usefully for monorepos. Set the working directory to run the steps in.
+  * Default: `.`.
 
 Example usage:
 
@@ -148,6 +154,9 @@ reasons.
 * **npm-setup-command**:
   * Command used to setup the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
+* **working-directory**:
+  * Usefully for monorepos. Set the working directory to run the steps in.
+  * Default: `.`.
 
 Example usage:
 

@@ -49,6 +49,9 @@ Node.js versions.
   * Whether to run the Codecov action to upload coverage data.
     This requires to pass the `codecov-token` secret for private repos.
   * Default: `true` for public repos and `false` for private repos.
+* **cwd**:
+  * Usefully for monorepos. Set the working directory to run the steps in.
+  * Default: `.`.
 
 #### Secrets
 

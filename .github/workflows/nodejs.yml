@@ -58,11 +58,11 @@ on:
         type: string
         default: <auto>
         required: false
-      working-directory:
+      cwd:
         description: >
           Usefully for monorepos. Set the working directory to run the steps in.
         type: string
-        default: .
+        default: '.'
         required: false
     secrets:
       codecov-token:
@@ -72,7 +72,7 @@ on:
 
 defaults:
   run:
-    working-directory: ${{ inputs.working-directory }}
+    working-directory: ${{ inputs.cwd }}
 
 jobs:
   prepare:

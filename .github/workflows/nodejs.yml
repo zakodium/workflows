@@ -70,10 +70,6 @@ on:
       env:
         required: false
 
-defaults:
-  run:
-    working-directory: ${{ inputs.cwd }}
-
 jobs:
   prepare:
     if: ${{ inputs.lint-eslint || inputs.lint-prettier || inputs.lint-check-types || !inputs.disable-tests }}
@@ -86,6 +82,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get npm setup command
         id: get-command
+        working-directory: ${{ inputs.cwd }}
         run: |
           SETUP_COMMAND="${{ inputs.npm-setup-command }}"
           if [ "$SETUP_COMMAND" = "<auto>" ]; then
@@ -98,6 +95,7 @@ jobs:
           echo "final-npm-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
       - name: Check Codecov settings
         id: check-codecov
+        working-directory: ${{ inputs.cwd }}
         run: |
           UPLOAD_COVERAGE="${{ inputs.upload-coverage }}"
           REPO_VISIBILITY=$(gh repo view --json visibility -q .visibility || echo "NOT_FOUND")
@@ -128,8 +126,10 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
       - name: Run npm setup command
+        working-directory: ${{ inputs.cwd }}
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Run ESLint
+        working-directory: ${{ inputs.cwd }}
         run: npm run eslint
   lint-prettier:
     if: ${{ inputs.lint-prettier }}
@@ -142,8 +142,10 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
       - name: Run npm setup command
+        working-directory: ${{ inputs.cwd }}
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Run Prettier
+        working-directory: ${{ inputs.cwd }}
         run: npm run prettier
   lint-check-types:
     if: ${{ inputs.lint-check-types }}
@@ -156,8 +158,10 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
       - name: Run npm setup command
+        working-directory: ${{ inputs.cwd }}
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Check types
+        working-directory: ${{ inputs.cwd }}
         run: npm run check-types
   test:
     if: ${{ !inputs.disable-tests }}
@@ -175,6 +179,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Setup env from secrets
+        working-directory: ${{ inputs.cwd }}
         run: |
           # Skip if secrets.env is not set
           if [ -z "${{ secrets.env }}" ]; then
@@ -194,11 +199,14 @@ jobs:
               echo "$key=$value" >> $GITHUB_ENV
           done <<< "${{ secrets.env }}"
       - name: Run npm setup command
+        working-directory: ${{ inputs.cwd }}
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Run test setup command
+        working-directory: ${{ inputs.cwd }}
         if: ${{ inputs.test-setup-command }}
         run: ${{ inputs.test-setup-command }}
       - name: Run tests
+        working-directory: ${{ inputs.cwd }}
         run: ${{ inputs.npm-test-command }}
       - name: Send coverage report to Codecov
         if: ${{ needs.prepare.outputs.final-upload-coverage == 'true' }}

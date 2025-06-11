@@ -78,6 +78,7 @@ jobs:
     outputs:
       final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
       final-upload-coverage: ${{ steps.check-codecov.outputs.final-upload-coverage }}
+      has-prepack-script: ${{ steps.check-prepack.outputs.has-prepack-script }}
     steps:
       - uses: actions/checkout@v4
       - name: Get npm setup command
@@ -115,6 +116,13 @@ jobs:
           echo "final-upload-coverage=$UPLOAD_COVERAGE" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Check prepack script
+        id: check-prepack
+        working-directory: ${{ inputs.cwd }}
+        run: |
+          if jq -e '.scripts.prepack // empty' package.json > /dev/null; then
+            echo "has-prepack-script=true" >> $GITHUB_OUTPUT
+          fi
   lint-eslint:
     if: ${{ inputs.lint-eslint }}
     needs: prepare
@@ -214,3 +222,19 @@ jobs:
         with:
           fail_ci_if_error: true
           token: ${{ secrets.codecov-token }}
+  test-prepack:
+    if: ${{ needs.prepare.outputs.has-prepack-script }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Run npm setup command
+        working-directory: ${{ inputs.cwd }}
+        run: ${{ needs.prepare.outputs.final-npm-setup-command }}
+      - name: Run prepack script
+        working-directory: ${{ inputs.cwd }}
+        run: npm run prepack

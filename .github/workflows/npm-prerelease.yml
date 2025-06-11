@@ -6,7 +6,7 @@ on:
       node-version:
         description: Version of Node.js used to run the npm publish steps.
         type: string
-        default: 20.x
+        default: 22.x
         required: false
       npm-setup-command:
         description: Command used to setup the package before publishing to npm.

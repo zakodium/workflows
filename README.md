@@ -18,7 +18,7 @@ Node.js versions.
 
 * **node-version**:
   * Version of Node.js used to run the lint steps.
-  * Default: `20.x`
+  * Default: `22.x`
 * **npm-setup-command**:
   * Command used to setup the package before running other steps.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
@@ -100,7 +100,7 @@ publish the package to the npm and GitHub package registries.
   * Default: `false`
 * **node-version**:
   * Version of Node.js used to run the npm publish steps.
-  * Default: `20.x`
+  * Default: `22.x`
 * **npm-setup-command**:
   * Command used to setup the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
@@ -147,7 +147,7 @@ reasons.
 
 * **node-version**:
   * Version of Node.js used to run the npm publish steps.
-  * Default: `20.x`
+  * Default: `22.x`
 * **npm-setup-command**:
   * Command used to setup the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.

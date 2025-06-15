@@ -147,7 +147,6 @@ and publish it to GitHub pages.
 * **entry**:
   * Entry point of the API.
     Multiple entry points can be specified using spaces as separators.
-  * Default: `src/index.ts`
 * **node-version**:
   * Version of Node.js used to run the build steps.
   * Default: `22.x`
@@ -174,6 +173,8 @@ jobs:
   typedoc:
     # Documentation: https://github.com/zakodium/workflows#typedoc
     uses: zakodium/workflows/.github/workflows/typedoc.yml@typedoc-v1
+    with:
+      entry: 'src/index.ts'
     secrets:
       github-token: ${{ secrets.BOT_TOKEN }}
 ````

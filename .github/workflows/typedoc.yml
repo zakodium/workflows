@@ -6,7 +6,6 @@ on:
       entry:
         description: Entry point of the API. Multiple entry points can be specified using spaces as separators.
         type: string
-        default: 'src/index.ts'
         required: true
       node-version:
         description: Version of Node.js used to run the npm publish steps.

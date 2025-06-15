@@ -42,6 +42,7 @@ jobs:
           fi
           echo "final-npm-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
   deploy:
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -6,6 +6,7 @@ Shared reusable GitHub workflows.
 
 * [`nodejs` (Node.js CI)](#nodejs-ci)
 * [`release`](#release)
+* [`typedoc`](#typedoc)
 * [`npm-prerelease`](#npm-prerelease)
 
 ### Node.js CI
@@ -63,7 +64,7 @@ Node.js versions.
   Must be passed with the `KEY=value` format (one per line).
   Values will be automatically treated as secrets and redacted from the logs.
 
-Example usage for a TypeScript project:
+#### Example usage for a TypeScript project
   
 ```yml
 name: Node.js CI
@@ -115,7 +116,7 @@ publish the package to the npm and GitHub package registries.
     Set to the empty string to use a [release manifest config](https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md).
   * Default: `node`
 
-Example usage:
+#### Example usage
 
 ````yml
 name: Release
@@ -136,6 +137,47 @@ jobs:
       npm-token: ${{ secrets.NPM_BOT_TOKEN }}
 ````
 
+### TypeDoc
+
+The typedoc workflow can be used to generate a documentation website with [TypeDoc](https://typedoc.org/)
+and publish it to GitHub pages.
+
+#### Inputs
+
+* **entry**:
+  * Entry point of the API.
+    Multiple entry points can be specified using spaces as separators.
+  * Default: `src/index.ts`
+* **node-version**:
+  * Version of Node.js used to run the build steps.
+  * Default: `22.x`
+* **npm-setup-command**:
+  * Command used to setup the package before publishing to npm.
+  * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
+
+#### Secrets
+
+* **github-token**
+  Token used to deploy to GitHub pages.
+
+#### Example usage
+
+````yml
+name: TypeDoc
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  typedoc:
+    # Documentation: https://github.com/zakodium/workflows#typedoc
+    uses: zakodium/workflows/.github/workflows/typedoc.yml@typedoc-v1
+    secrets:
+      github-token: ${{ secrets.BOT_TOKEN }}
+````
+
 ### npm prerelease
 
 This workflow allows to create an npm prerelease. The state of the repository
@@ -152,7 +194,7 @@ reasons.
   * Command used to setup the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 
-Example usage:
+#### Example usage
 
 ````yml
 name: Prerelease package on npm

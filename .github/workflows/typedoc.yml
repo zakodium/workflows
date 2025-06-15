@@ -1,0 +1,64 @@
+name: Build and deploy TypeDoc on GitHub pages
+
+on:
+  workflow_call:
+    inputs:
+      entry:
+        description: Entry point of the API. Multiple entry points can be specified using spaces as separators.
+        type: string
+        default: 'src/index.ts'
+        required: true
+      node-version:
+        description: Version of Node.js used to run the npm publish steps.
+        type: string
+        default: 22.x
+        required: false
+      npm-setup-command:
+        description: Command used to setup the package before publishing to npm.
+        type: string
+        default: <auto>
+        required: false
+    secrets:
+      github-token:
+        required: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get npm setup command
+        id: get-command
+        run: |
+          SETUP_COMMAND="${{ inputs.npm-setup-command }}"
+          if [ "$SETUP_COMMAND" = "<auto>" ]; then
+            if [ -f "package-lock.json" ]; then
+              SETUP_COMMAND="npm ci"
+            else
+              SETUP_COMMAND="npm install"
+            fi
+          fi
+          echo "final-npm-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Run npm setup command
+        run: ${{ needs.prepare.outputs.final-npm-setup-command }}
+      - name: Build documentation
+        uses: zakodium/typedoc-action@v2
+        with:
+          entry: ${{ inputs.entry }}
+      - name: Deploy to GitHub pages
+        uses: JamesIves/github-pages-deploy-action@releases/v4
+        with:
+          token: ${{ secrets.github-token }}
+          branch: gh-pages
+          folder: docs
+          clean: true

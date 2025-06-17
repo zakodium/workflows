@@ -235,4 +235,4 @@ jobs:
         working-directory: ${{ inputs.cwd }}
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Test package
-        uses: zakodium/test-package-action@dev
+        uses: zakodium/test-package-action@v1

@@ -12,8 +12,9 @@ Shared reusable GitHub workflows.
 ### Node.js CI
 
 Generic workflow to run linters and tests for Node.js projects. It supports `eslint`,
-`prettier`, and `check-types` linter steps and will run tests using a matrix of
-Node.js versions.
+`prettier`, and `check-types` linter steps, will run tests using a matrix of
+Node.js versions, and verify that the package can be published to a registry
+and imported.
 
 #### Inputs
 
@@ -35,6 +36,10 @@ Node.js versions.
   * Default: `false`
 * **disable-tests**:
   * Disable the test matrix.
+  * Default: `false`
+* **disable-test-package**:
+  * Disable testing that the package can safely be published to a registry
+    and imported.
   * Default: `false`
 * **node-version-matrix**:
   * Versions of Node.js to test on, as a JSON array.

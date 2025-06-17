@@ -7,6 +7,10 @@ on:
         description: Entry point of the API. Multiple entry points can be specified using spaces as separators.
         type: string
         required: true
+      name:
+        description: Name of the package. It will be used as a documentation title. Defaults to `package.json`'s name field.
+        type: string
+        required: false
       node-version:
         description: Version of Node.js used to run the npm publish steps.
         type: string
@@ -55,6 +59,7 @@ jobs:
         uses: zakodium/typedoc-action@v2
         with:
           entry: ${{ inputs.entry }}
+          name: ${{ inputs.name }}
       - name: Deploy to GitHub pages
         uses: JamesIves/github-pages-deploy-action@releases/v4
         with:

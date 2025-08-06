@@ -3,6 +3,12 @@ name: Release a Node.js package
 on:
   workflow_call:
     inputs:
+      github-app-id:
+        description: >
+          The id of a GitHub app used to publish the release. The github-app-key
+          secret is mandatory instead of the github-token secret when this is set.
+        type: string
+        required: false
       npm:
         description: >
           Whether the package will be published to npm. You must pass the
@@ -38,7 +44,9 @@ on:
         required: false
     secrets:
       github-token:
-        required: true
+        required: false
+      github-app-key:
+        required: false
       npm-token:
         required: false
 
@@ -55,10 +63,19 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get package name
         run: echo "PACKAGE_NAME=$(jq .name package.json | tr -d '"')" >> $GITHUB_ENV
+      - name: Generate a token for release-please
+        if: ${{ inputs.github-app-id }}
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ inputs.github-app-id }}
+          private-key: ${{ secrets.github-app-key }}
+          permission-contents: write
+          permission-pull-requests: write
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          token: ${{ secrets.github-token }}
+          token: ${{ steps.generate-token.outputs.token || secrets.github-token }}
           release-type: ${{ inputs.release-type }}
       - name: Get npm setup command
         id: get-command
@@ -124,8 +141,16 @@ jobs:
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+      - name: Generate a publish token for npm
+        if: ${{ matrix.enabled && matrix.id=='github' && inputs.github-app-id }}
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ inputs.github-app-id }}
+          private-key: ${{ secrets.github-app-key }}
+          permission-packages: write
       - name: Publish package to GitHub Package Registry
         if: ${{ matrix.enabled && matrix.id=='github' }}
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.github-token }}
+          NODE_AUTH_TOKEN: ${{ steps.generate-token.outputs.token || secrets.github-token }}

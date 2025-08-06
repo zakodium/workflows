@@ -22,7 +22,7 @@ and imported.
   * Version of Node.js used to run the lint steps.
   * Default: `22.x`
 * **npm-setup-command**:
-  * Command used to setup the package before running other steps.
+  * Command used to set up the package before running other steps.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 * **lint-eslint**:
   * Whether to run the `eslint` npm script.
@@ -45,8 +45,8 @@ and imported.
   * Versions of Node.js to test on, as a JSON array.
   * Default: `'[20, 22, 24]'`
 * **test-setup-command**:
-  * Command used to setup the package before running npm tests. Will run
-    between `npm-setup-command` and `npm-test-command`.
+  * Command used to set up the package before running npm tests.
+    Will run between `npm-setup-command` and `npm-test-command`.
   * Default: `undefined`
 * **npm-test-command**:
   * Command used to run the tests.
@@ -90,7 +90,7 @@ jobs:
 
 ### Release
 
-The release workflow helps to automatically release packages that conform the
+The release workflow helps to automatically release packages that conform to the
 [conventional commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
 
 It uses the [Release Please Action](https://github.com/google-github-actions/release-please-action#release-please-action)
@@ -100,6 +100,9 @@ publish the package to the npm and GitHub package registries.
 
 #### Inputs
 
+* **github-app-id**
+  * The id of a GitHub app used to publish the release.
+    The `github-app-key` secret is mandatory instead of the `github-token` secret when this is set.
 * **npm**:
   * Pass `true` to enable the npm publish steps. In that case, the `npm-token`
     secret is mandatory.
@@ -108,7 +111,7 @@ publish the package to the npm and GitHub package registries.
   * Version of Node.js used to run the npm publish steps.
   * Default: `22.x`
 * **npm-setup-command**:
-  * Command used to setup the package before publishing to npm.
+  * Command used to set up the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 * **public**:
   * This option only affects scoped packages.
@@ -120,6 +123,17 @@ publish the package to the npm and GitHub package registries.
   * Option passed to the [release-please action](https://github.com/googleapis/release-please-action?tab=readme-ov-file#release-types-supported).
     Set to the empty string to use a [release manifest config](https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md).
   * Default: `node`
+
+#### Secrets
+
+* **github-token**
+  A GitHub PAT passed to release-please and npm (if the package is published to GPR).
+  Mandatory when `github-app-id` **is not** passed.
+* **github-app-key**
+  A GitHub app private key belonging to the app referenced by `github-app-id`.
+  Mandatory when `github-app-id` **is** passed.
+* **npm-token**
+  A npm automation token with the permission to publish this package.
 
 #### Example usage
 
@@ -159,7 +173,7 @@ and publish it to GitHub pages.
   * Version of Node.js used to run the build steps.
   * Default: `22.x`
 * **npm-setup-command**:
-  * Command used to setup the package before publishing to npm.
+  * Command used to set up the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 
 #### Secrets
@@ -189,10 +203,10 @@ jobs:
 
 ### npm prerelease
 
-This workflow allows to create an npm prerelease. The state of the repository
-will be published as-is, using `$currentVersion-pre-$epoch` as a version number
-and `pre` as the npm dist-tag. Scoped packages are not supported for security
-reasons.
+This workflow allows to create a npm pre-release.
+The state of the repository will be published as-is, using `$currentVersion-pre-$epoch` as a version number
+and `pre` as the npm dist-tag.
+Scoped packages are not supported for security reasons.
 
 #### Inputs
 
@@ -200,7 +214,7 @@ reasons.
   * Version of Node.js used to run the npm publish steps.
   * Default: `22.x`
 * **npm-setup-command**:
-  * Command used to setup the package before publishing to npm.
+  * Command used to set up the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 
 #### Example usage

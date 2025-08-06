@@ -149,7 +149,7 @@ on:
 jobs:
   release:
     # Documentation: https://github.com/zakodium/workflows#release
-    uses: zakodium/workflows/.github/workflows/release.yml@release-app
+    uses: zakodium/workflows/.github/workflows/release.yml@release-v1
     permissions:
       packages: write
     with:
@@ -174,7 +174,7 @@ on:
 jobs:
   release:
     # Documentation: https://github.com/zakodium/workflows#release
-    uses: zakodium/workflows/.github/workflows/release.yml@release-app
+    uses: zakodium/workflows/.github/workflows/release.yml@release-v1
     with:
       github-app-id: ${{ vars.RELEASE_APP_ID }}
     secrets:

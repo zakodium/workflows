@@ -22,7 +22,7 @@ and imported.
   * Version of Node.js used to run the lint steps.
   * Default: `22.x`
 * **npm-setup-command**:
-  * Command used to setup the package before running other steps.
+  * Command used to set up the package before running other steps.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 * **lint-eslint**:
   * Whether to run the `eslint` npm script.
@@ -45,8 +45,8 @@ and imported.
   * Versions of Node.js to test on, as a JSON array.
   * Default: `'[20, 22, 24]'`
 * **test-setup-command**:
-  * Command used to setup the package before running npm tests. Will run
-    between `npm-setup-command` and `npm-test-command`.
+  * Command used to set up the package before running npm tests.
+    Will run between `npm-setup-command` and `npm-test-command`.
   * Default: `undefined`
 * **npm-test-command**:
   * Command used to run the tests.
@@ -90,7 +90,7 @@ jobs:
 
 ### Release
 
-The release workflow helps to automatically release packages that conform the
+The release workflow helps to automatically release packages that conform to the
 [conventional commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
 
 It uses the [Release Please Action](https://github.com/google-github-actions/release-please-action#release-please-action)
@@ -100,28 +100,88 @@ publish the package to the npm and GitHub package registries.
 
 #### Inputs
 
+* **github-app-id**
+  * The id of a GitHub app used to publish the release.
+    The `github-app-key` secret is mandatory when this is set.
 * **npm**:
   * Pass `true` to enable the npm publish steps. In that case, the `npm-token`
-    secret is mandatory.
+    or `github-token` (or both) secret is mandatory.
   * Default: `false`
 * **node-version**:
   * Version of Node.js used to run the npm publish steps.
   * Default: `22.x`
 * **npm-setup-command**:
-  * Command used to setup the package before publishing to npm.
+  * Command used to set up the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 * **public**:
   * This option only affects scoped packages.
     Whether the package will be published to the public npm registry. If `false`,
     the package will be published only to the GitHub Package Registry (GPR).
-    When publishing to GPR, the `github-token` must also have the `write:packages` scope.
+    When publishing to GPR, the `github-token` must have the `packages: write` permission.
   * Default: `false`
 * **release-type**:
   * Option passed to the [release-please action](https://github.com/googleapis/release-please-action?tab=readme-ov-file#release-types-supported).
     Set to the empty string to use a [release manifest config](https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md).
   * Default: `node`
 
-#### Example usage
+#### Secrets
+
+* **github-app-key**
+  A GitHub app private key belonging to the app referenced by `github-app-id`.
+  Mandatory when `github-app-id` is passed.
+* **github-token**
+  A GitHub token passed to release-please (if not using `github-app-key`) and npm (if the package is published to GPR).
+* **npm-token**
+  A npm automation token with the permission to publish this package.
+
+#### Example usages
+
+##### With a GitHub app - package released to GPR
+
+````yml
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    # Documentation: https://github.com/zakodium/workflows#release
+    uses: zakodium/workflows/.github/workflows/release.yml@release-app
+    permissions:
+      packages: write
+    with:
+      npm: true
+      public: false
+      github-app-id: ${{ vars.RELEASE_APP_ID }}
+    secrets:
+      github-app-key: ${{ secrets.RELEASE_APP_KEY }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+````
+
+##### With a GitHub app - repository not published to a registry
+
+````yml
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    # Documentation: https://github.com/zakodium/workflows#release
+    uses: zakodium/workflows/.github/workflows/release.yml@release-app
+    with:
+      github-app-id: ${{ vars.RELEASE_APP_ID }}
+    secrets:
+      github-app-key: ${{ secrets.RELEASE_APP_KEY }}
+````
+
+##### With a GitHub PAT - package released to the public npm registry
 
 ````yml
 name: Release
@@ -159,7 +219,7 @@ and publish it to GitHub pages.
   * Version of Node.js used to run the build steps.
   * Default: `22.x`
 * **npm-setup-command**:
-  * Command used to setup the package before publishing to npm.
+  * Command used to set up the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 
 #### Secrets
@@ -189,10 +249,10 @@ jobs:
 
 ### npm prerelease
 
-This workflow allows to create an npm prerelease. The state of the repository
-will be published as-is, using `$currentVersion-pre-$epoch` as a version number
-and `pre` as the npm dist-tag. Scoped packages are not supported for security
-reasons.
+This workflow allows to create a npm pre-release.
+The state of the repository will be published as-is, using `$currentVersion-pre-$epoch` as a version number
+and `pre` as the npm dist-tag.
+Scoped packages are not supported for security reasons.
 
 #### Inputs
 
@@ -200,7 +260,7 @@ reasons.
   * Version of Node.js used to run the npm publish steps.
   * Default: `22.x`
 * **npm-setup-command**:
-  * Command used to setup the package before publishing to npm.
+  * Command used to set up the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
 
 #### Example usage

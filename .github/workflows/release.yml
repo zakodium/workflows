@@ -137,6 +137,8 @@ jobs:
       - name: Run npm setup command
         if: ${{ matrix.enabled }}
         run: ${{ needs.release-please.outputs.npm-final-setup-command }}
+        env:
+          NODE_AUTH_TOKEN: ${{ matrix.id=='github' && (steps.generate-token.outputs.token || secrets.github-token) || '' }}
       - name: Publish package to npm
         if: ${{ matrix.enabled && matrix.id=='npm' }}
         run: npm publish --access public

@@ -134,6 +134,14 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: ${{ matrix.registry-url }}
+      - name: Generate a token for npm
+        if: ${{ matrix.enabled && matrix.id=='github' && inputs.github-app-id }}
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ inputs.github-app-id }}
+          private-key: ${{ secrets.github-app-key }}
+          permission-packages: write
       - name: Run npm setup command
         if: ${{ matrix.enabled }}
         run: ${{ needs.release-please.outputs.npm-final-setup-command }}
@@ -144,14 +152,6 @@ jobs:
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
-      - name: Generate a publish token for npm
-        if: ${{ matrix.enabled && matrix.id=='github' && inputs.github-app-id }}
-        id: generate-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ inputs.github-app-id }}
-          private-key: ${{ secrets.github-app-key }}
-          permission-packages: write
       - name: Publish package to GitHub Package Registry
         if: ${{ matrix.enabled && matrix.id=='github' }}
         run: npm publish

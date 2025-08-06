@@ -71,6 +71,7 @@ jobs:
           app-id: ${{ inputs.github-app-id }}
           private-key: ${{ secrets.github-app-key }}
           permission-contents: write
+          permission-issues: write
           permission-pull-requests: write
       - uses: googleapis/release-please-action@v4
         id: release

@@ -102,10 +102,10 @@ publish the package to the npm and GitHub package registries.
 
 * **github-app-id**
   * The id of a GitHub app used to publish the release.
-    The `github-app-key` secret is mandatory instead of the `github-token` secret when this is set.
+    The `github-app-key` secret is mandatory when this is set.
 * **npm**:
   * Pass `true` to enable the npm publish steps. In that case, the `npm-token`
-    secret is mandatory.
+    or `github-token` (or both) secret is mandatory.
   * Default: `false`
 * **node-version**:
   * Version of Node.js used to run the npm publish steps.
@@ -117,7 +117,7 @@ publish the package to the npm and GitHub package registries.
   * This option only affects scoped packages.
     Whether the package will be published to the public npm registry. If `false`,
     the package will be published only to the GitHub Package Registry (GPR).
-    When publishing to GPR, the `github-token` must also have the `write:packages` scope.
+    When publishing to GPR, the `github-token` must have the `packages: write` permission.
   * Default: `false`
 * **release-type**:
   * Option passed to the [release-please action](https://github.com/googleapis/release-please-action?tab=readme-ov-file#release-types-supported).
@@ -126,16 +126,62 @@ publish the package to the npm and GitHub package registries.
 
 #### Secrets
 
-* **github-token**
-  A GitHub PAT passed to release-please and npm (if the package is published to GPR).
-  Mandatory when `github-app-id` **is not** passed.
 * **github-app-key**
   A GitHub app private key belonging to the app referenced by `github-app-id`.
-  Mandatory when `github-app-id` **is** passed.
+  Mandatory when `github-app-id` is passed.
+* **github-token**
+  A GitHub token passed to release-please (if not using `github-app-key`) and npm (if the package is published to GPR).
 * **npm-token**
   A npm automation token with the permission to publish this package.
 
-#### Example usage
+#### Example usages
+
+##### With a GitHub app - package released to GPR
+
+````yml
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    # Documentation: https://github.com/zakodium/workflows#release
+    uses: zakodium/workflows/.github/workflows/release.yml@release-app
+    permissions:
+      packages: write
+    with:
+      npm: true
+      public: false
+      github-app-id: ${{ vars.RELEASE_APP_ID }}
+    secrets:
+      github-app-key: ${{ secrets.RELEASE_APP_KEY }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+````
+
+##### With a GitHub app - repository not published to a registry
+
+````yml
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    # Documentation: https://github.com/zakodium/workflows#release
+    uses: zakodium/workflows/.github/workflows/release.yml@release-app
+    with:
+      github-app-id: ${{ vars.RELEASE_APP_ID }}
+    secrets:
+      github-app-key: ${{ secrets.RELEASE_APP_KEY }}
+````
+
+##### With a GitHub PAT - package released to the public npm registry
 
 ````yml
 name: Release

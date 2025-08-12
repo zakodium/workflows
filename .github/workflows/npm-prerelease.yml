@@ -6,7 +6,7 @@ on:
       node-version:
         description: Version of Node.js used to run the npm publish steps.
         type: string
-        default: 22.x
+        default: 24.x
         required: false
       npm-setup-command:
         description: Command used to setup the package before publishing to npm.
@@ -33,7 +33,7 @@ jobs:
         # Ignore labeling events with a label other than 'npm-prerelease'
         if: ${{ (github.event_name == 'pull_request' && github.event.action == 'labeled' && github.event.label.name == 'npm-prerelease') || (github.event_name == 'workflow_dispatch') }}
         run: echo "continue=true" >> $GITHUB_OUTPUT
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: ${{ steps.validation.outputs.continue }}
       - name: Fail if package is scoped
         if: ${{ steps.validation.outputs.continue }}
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}

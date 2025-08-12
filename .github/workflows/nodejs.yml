@@ -6,7 +6,7 @@ on:
       node-version:
         description: Version of Node.js used to run the lint steps.
         type: string
-        default: 22.x
+        default: 24.x
         required: false
       npm-setup-command:
         description: Command used to setup the package before running other steps.
@@ -86,7 +86,7 @@ jobs:
       final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
       final-upload-coverage: ${{ steps.check-codecov.outputs.final-upload-coverage }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Get npm setup command
         id: get-command
         working-directory: ${{ inputs.cwd }}
@@ -128,7 +128,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
@@ -144,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
@@ -160,7 +160,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
@@ -180,7 +180,7 @@ jobs:
         node-version: ${{ fromJson(inputs.node-version-matrix) }}
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -227,7 +227,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}

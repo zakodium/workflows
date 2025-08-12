@@ -20,7 +20,7 @@ and imported.
 
 * **node-version**:
   * Version of Node.js used to run the lint steps.
-  * Default: `22.x`
+  * Default: `24.x`
 * **npm-setup-command**:
   * Command used to set up the package before running other steps.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
@@ -109,7 +109,7 @@ publish the package to the npm and GitHub package registries.
   * Default: `false`
 * **node-version**:
   * Version of Node.js used to run the npm publish steps.
-  * Default: `22.x`
+  * Default: `24.x`
 * **npm-setup-command**:
   * Command used to set up the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
@@ -217,7 +217,7 @@ and publish it to GitHub pages.
     Defaults to `package.json`'s name field.
 * **node-version**:
   * Version of Node.js used to run the build steps.
-  * Default: `22.x`
+  * Default: `24.x`
 * **npm-setup-command**:
   * Command used to set up the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
@@ -258,7 +258,7 @@ Scoped packages are not supported for security reasons.
 
 * **node-version**:
   * Version of Node.js used to run the npm publish steps.
-  * Default: `22.x`
+  * Default: `24.x`
 * **npm-setup-command**:
   * Command used to set up the package before publishing to npm.
   * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.

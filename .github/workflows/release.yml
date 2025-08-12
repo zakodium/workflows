@@ -19,7 +19,7 @@ on:
       node-version:
         description: Version of Node.js used to run the npm publish steps.
         type: string
-        default: 22.x
+        default: 24.x
         required: false
       npm-setup-command:
         description: Command used to setup the package before publishing to npm.
@@ -60,7 +60,7 @@ jobs:
       publish_github: ${{ steps.extract-registries.outputs.publish_github }}
       publish_npm: ${{ steps.extract-registries.outputs.publish_npm }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Get package name
         run: echo "PACKAGE_NAME=$(jq .name package.json | tr -d '"')" >> $GITHUB_ENV
       - name: Generate a token for release-please
@@ -127,7 +127,7 @@ jobs:
             registry-url: 'https://npm.pkg.github.com'
     name: publish-package-${{ matrix.id }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: ${{ matrix.enabled }}
       - uses: actions/setup-node@v4
         if: ${{ matrix.enabled }}

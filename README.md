@@ -212,6 +212,7 @@ and publish it to GitHub pages.
 * **entry**:
   * Entry point of the API.
     Multiple entry points can be specified using spaces as separators.
+    Defaults to `src/index.ts`.
 * **name**:
   * Name of the package. It will be used as a documentation title.
     Defaults to `package.json`'s name field.

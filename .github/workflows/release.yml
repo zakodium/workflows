@@ -141,11 +141,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ matrix.id=='github' && secrets.github-token || '' }}
       - name: Publish package to npm
         if: ${{ matrix.enabled && matrix.id=='npm' }}
-        run: npm publish --access public
+        run: npm publish --no-ignore-scripts --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
       - name: Publish package to GitHub Package Registry
         if: ${{ matrix.enabled && matrix.id=='github' }}
-        run: npm publish
+        run: npm publish --no-ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.github-token }}

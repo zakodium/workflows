@@ -80,7 +80,7 @@ jobs:
           echo "NPM_VERSION=$NPM_VERSION" >> $GITHUB_ENV
           npm version --no-git-tag-version $NPM_VERSION
       - name: Publish package to npm
-        run: npm publish --access public --tag pre
+        run: npm publish --no-ignore-scripts --access public --tag pre
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
       - name: Remove label

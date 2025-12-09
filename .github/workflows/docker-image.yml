@@ -1,0 +1,114 @@
+name: Build and push a Docker image
+
+on:
+  workflow_call:
+    inputs:
+      dockerfile:
+        description: Path to the Dockerfile to build.
+        type: string
+        default: Dockerfile
+        required: false
+      registry:
+        description: Hostname for the Docker registry.
+        type: string
+        default: ghcr.io
+        required: false
+      image-name:
+        description: Name of the Docker image.
+        type: string
+        required: false
+      tag:
+        description: Name of the tag to push. Ignored if `tag-version` is passed.
+        type: string
+        default: HEAD
+        required: false
+      tag-version:
+        description: >
+          Semver version to use as a tag. E.g. `v1.2.3`.
+          It will automatically be split to publish three versions. E.g. `v1.2.3`, `v1.2`, `v1`.
+        type: string
+        required: false
+      tag-latest:
+        description: >
+          Whether a `latest` tag should be published as well.
+          Defaults to `true` if `tag-version` is passed, `false` otherwise.
+        type: string
+        default: <auto>
+        required: false
+      cwd:
+        description: Set the working directory to run the steps in.
+        type: string
+        default: .
+        required: false
+      ref:
+        description: GitHub ref to checkout.
+        type: string
+        required: false
+    secrets:
+      registry-token:
+        required: false
+
+env:
+  REGISTRY: ${{ inputs.registry }}
+  IMAGE_NAME: ${{ inputs.image-name || github.repository }}
+
+jobs:
+  docker-image:
+    name: Build and push image to registry
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+      - name: Determine Docker tags
+        id: get-tags
+        run: |
+          TAG="${{ inputs.tag }}"
+          TAG_VERSION="${{ inputs.tag-version }}"
+          TAG_LATEST="${{ inputs.tag-latest }}"
+          TAGS=""
+
+          if [ -n "$TAG_VERSION" ]; then
+            # Remove potential "v" prefix. -> 1.2.3
+            TAG_VERSION=$(echo "$TAG_VERSION" | sed -e 's/^v//')
+            TAGS="$TAGS $TAG_VERSION"
+            # Remove patch version -> 1.2
+            TAG_VERSION=${TAG_VERSION%.*}
+            TAGS="$TAGS $TAG_VERSION"
+            # Remove minor version -> 1
+            TAG_VERSION=${TAG_VERSION%.*}
+            TAGS="$TAGS $TAG_VERSION"
+          else
+            TAGS="$TAGS $TAG"
+          fi
+          
+          if [[ "$TAG_LATEST" == "<auto>" ]]; then
+            if [ -n "$TAG_VERSION" ]; then
+              TAG_LATEST="true"
+            else
+              TAG_LATEST="false"
+            fi
+          fi
+          
+          if [[ "$TAG_LATEST" == "true" ]]; then
+            TAGS="$TAGS latest"
+          fi
+          
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+      - name: Log in to registry
+        run: echo "${{ secrets.registry-token || secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ inputs.registry-user || github.actor }} --password-stdin
+      - name: Build image
+        working-directory: ${{ inputs.cwd }}
+        run: docker build . -f "${{ inputs.dockerfile}}" --tag gha_build --label "runnumber=${GITHUB_RUN_ID}"
+      - name: Push image
+        run: |
+          IMAGE_ID="${REGISTRY}/${IMAGE_NAME}"
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          
+          TAGS=${{ steps.get-tags.outputs.tags }}
+          for TAG in "$TAGS"; do
+            docker tag gha_build "$IMAGE_ID:$TAG"
+            docker push "$IMAGE_ID:$TAG"
+          done

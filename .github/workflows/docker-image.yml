@@ -113,7 +113,7 @@ jobs:
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           
           TAGS="${{ steps.get-tags.outputs.tags }}"
-          for TAG in "$TAGS"; do
+          for TAG in $TAGS; do
             docker tag gha_build "$IMAGE_ID:$TAG"
             docker push "$IMAGE_ID:$TAG"
           done

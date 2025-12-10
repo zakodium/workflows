@@ -68,7 +68,7 @@ jobs:
       - name: Determine Docker tags
         id: get-tags
         run: |
-          TAG="${{ inputs.tag }}"
+          TAG="${{ inputs.tag || 'HEAD' }}"
           TAG_VERSION="${{ inputs.tag-version }}"
           TAG_LATEST="${{ inputs.tag-latest }}"
           TAGS=""

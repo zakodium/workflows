@@ -99,6 +99,7 @@ jobs:
             TAGS="$TAGS latest"
           fi
           
+          echo "Tags: $TAGS"
           echo "tags=$TAGS" >> $GITHUB_OUTPUT
       - name: Log in to registry
         run: echo "${{ secrets.registry-token || secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ inputs.registry-user || github.actor }} --password-stdin
@@ -111,7 +112,7 @@ jobs:
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           
-          TAGS=${{ steps.get-tags.outputs.tags }}
+          TAGS="${{ steps.get-tags.outputs.tags }}"
           for TAG in "$TAGS"; do
             docker tag gha_build "$IMAGE_ID:$TAG"
             docker push "$IMAGE_ID:$TAG"

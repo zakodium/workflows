@@ -6,6 +6,7 @@ Shared reusable GitHub workflows.
 
 * [`nodejs` (Node.js CI)](#nodejs-ci)
 * [`release`](#release)
+* [`docker-image`](#docker-image)
 * [`typedoc`](#typedoc)
 * [`npm-prerelease`](#npm-prerelease)
 
@@ -201,6 +202,78 @@ jobs:
       github-token: ${{ secrets.BOT_TOKEN }}
       npm-token: ${{ secrets.NPM_BOT_TOKEN }}
 ````
+
+### Docker image
+
+This workflow allows to build and push a Docker image to some registry. It can handle simple explicit tags and releases.
+
+#### Inputs
+
+* **dockerfile**
+  * Path to the Dockerfile to build.
+  * Default: `Dockerfile`
+* **registry**
+  * Hostname for the Docker registry.
+  * Default: `ghcr.io`
+* **registry-user**
+  * Username to log in to the registry.
+  * Default: `${{ github.actor }}`
+* **image-name**
+  * Name of the Docker image. E.g. `zakodium/workflows`
+  * Default: `${{ github.repository }}`
+* **tag**
+  * Name of the tag to push. Ignored if `tag-version` is passed.
+  * Default: `HEAD`
+* **tag-version**
+  * Semver version to use as a tag (v prefix is optional). E.g. `v1.2.3`.
+    It will automatically be split to publish three versions. E.g. `1.2.3`, `1.2`, `1`.
+* **tag-latest**
+  * Whether a `latest` tag should be published as well.
+  * Default: `true` if `tag-version` is passed, `false` otherwise.
+* **cwd**:
+  * Set the working directory to run the Docker build in.
+  * Default: `.`
+* **ref**:
+  * GitHub ref to checkout.
+  * Default: Ref that corresponds to the triggering event.
+
+#### Secrets
+
+* **registry-token**
+  * Token for the Docker registry.
+  * Default: Job's `secret.GITHUB_TOKEN`.
+
+#### Example usage
+
+Publish an image to the GitHub package registry using the default job's token:
+
+```yml
+name: Docker Image CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'GitHub ref to checkout'
+        required: true
+        default: main
+      tag:
+        description: 'Docker tag to push (do NOT use "latest" or version numbers)'
+        required: true
+        default: 'HEAD'
+  push:
+    tags:
+      - v*
+
+jobs:
+  docker-image:
+    # Documentation: https://github.com/zakodium/workflows#docker-image
+    uses: zakodium/workflows/.github/workflows/docker-image.yml@docker-image-v1
+    with:
+      ref: ${{ inputs.ref }}
+      tag: ${{ inputs.tag }}
+      tag-version: ${{ github.event_name == 'push' && github.ref_name || '' }}
+```
 
 ### TypeDoc
 

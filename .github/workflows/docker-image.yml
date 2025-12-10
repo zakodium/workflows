@@ -114,6 +114,7 @@ jobs:
           
           TAGS="${{ steps.get-tags.outputs.tags }}"
           for TAG in $TAGS; do
+            echo "Pushing $IMAGE_ID:$TAG"
             docker tag gha_build "$IMAGE_ID:$TAG"
             docker push "$IMAGE_ID:$TAG"
           done

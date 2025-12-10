@@ -270,8 +270,9 @@ jobs:
     # Documentation: https://github.com/zakodium/workflows#docker-image
     uses: zakodium/workflows/.github/workflows/docker-image.yml@docker-image-v1
     with:
-      ref: ${{ github.event.inputs.ref }}
-      tag: ${{ github.event.inputs.tag }}
+      ref: ${{ inputs.ref }}
+      tag: ${{ inputs.tag }}
+      tag-version: ${{ github.event_name == 'push' && github.ref_name || '' }}
 ```
 
 ### TypeDoc

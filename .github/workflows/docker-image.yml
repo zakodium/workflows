@@ -13,6 +13,10 @@ on:
         type: string
         default: ghcr.io
         required: false
+      registry-user:
+        description: Username to log in to the registry.
+        type: string
+        required: false
       image-name:
         description: Name of the Docker image.
         type: string

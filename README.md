@@ -236,6 +236,9 @@ This workflow allows to build and push a Docker image to some registry. It can h
 * **ref**:
   * GitHub ref to checkout.
   * Default: Ref that corresponds to the triggering event.
+* **checkout-submodules**:
+  * Whether submodules should be initialized during checkout.
+  * Default `false`
 
 #### Secrets
 

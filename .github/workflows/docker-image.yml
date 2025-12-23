@@ -48,6 +48,11 @@ on:
         description: GitHub ref to checkout.
         type: string
         required: false
+      checkout-submodules:
+        description: Whether submodules should be initialized during checkout.
+        type: boolean
+        required: false
+        default: false
     secrets:
       registry-token:
         required: false
@@ -65,6 +70,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.ref }}
+          submodules: ${{ inputs.checkout-submodules }}
       - name: Determine Docker tags
         id: get-tags
         run: |

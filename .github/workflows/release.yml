@@ -60,7 +60,7 @@ jobs:
       publish_github: ${{ steps.extract-registries.outputs.publish_github }}
       publish_npm: ${{ steps.extract-registries.outputs.publish_npm }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Get package name
         run: echo "PACKAGE_NAME=$(jq .name package.json | tr -d '"')" >> $GITHUB_ENV
       - name: Generate a token for release-please
@@ -127,9 +127,9 @@ jobs:
             registry-url: 'https://npm.pkg.github.com'
     name: publish-package-${{ matrix.id }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         if: ${{ matrix.enabled }}
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         if: ${{ matrix.enabled }}
         with:
           node-version: ${{ inputs.node-version }}

@@ -32,7 +32,7 @@ jobs:
     outputs:
       final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Get npm setup command
         id: get-command
         run: |
@@ -49,8 +49,8 @@ jobs:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node-version }}
       - name: Run npm setup command

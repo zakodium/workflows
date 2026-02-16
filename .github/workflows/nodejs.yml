@@ -80,7 +80,7 @@ on:
 jobs:
   prepare:
     if: ${{ inputs.lint-eslint || inputs.lint-prettier || inputs.lint-check-types || !inputs.disable-tests || !inputs.disable-test-package }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
       final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
@@ -125,7 +125,7 @@ jobs:
   lint-eslint:
     if: ${{ inputs.lint-eslint }}
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
@@ -141,7 +141,7 @@ jobs:
   lint-prettier:
     if: ${{ inputs.lint-prettier }}
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
@@ -157,7 +157,7 @@ jobs:
   lint-check-types:
     if: ${{ inputs.lint-check-types }}
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
@@ -224,7 +224,7 @@ jobs:
   test-package:
     if: ${{ !inputs.disable-test-package }}
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6

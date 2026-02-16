@@ -52,7 +52,7 @@ on:
 
 jobs:
   release-please:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
@@ -113,7 +113,7 @@ jobs:
   publish-package:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created && inputs.npm && (needs.release-please.outputs.publish_npm=='true' || needs.release-please.outputs.publish_github=='true') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 10
     strategy:
       fail-fast: false

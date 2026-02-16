@@ -21,7 +21,7 @@ on:
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
       continue: ${{ steps.validation.outputs.continue }}
@@ -59,7 +59,7 @@ jobs:
   npm-publish:
     needs: prepare
     if: ${{ needs.prepare.outputs.continue }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6

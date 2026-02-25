@@ -1,0 +1,70 @@
+name: Build and deploy on lactame.com
+
+on:
+  workflow_call:
+    inputs:
+      folder:
+        description: Folder containing the build output to deploy.
+        type: string
+        default: dist
+        required: false
+      build-command:
+        description: Command used to build the project.
+        type: string
+        default: npm run build
+        required: false
+      node-version:
+        description: Version of Node.js used to run the build steps.
+        type: string
+        default: 24.x
+        required: false
+      npm-setup-command:
+        description: Command used to set up the package before building.
+        type: string
+        default: <auto>
+        required: false
+    secrets:
+      lactame-token:
+        required: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    outputs:
+      final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Get npm setup command
+        id: get-command
+        run: |
+          SETUP_COMMAND="${{ inputs.npm-setup-command }}"
+          if [ "$SETUP_COMMAND" = "<auto>" ]; then
+            if [ -f "package-lock.json" ]; then
+              SETUP_COMMAND="npm ci"
+            else
+              SETUP_COMMAND="npm install"
+            fi
+          fi
+          echo "final-npm-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-slim
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Get package name
+        run: echo "PACKAGE_NAME=$(jq -r .name package.json)" >> $GITHUB_ENV
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Run npm setup command
+        run: ${{ needs.prepare.outputs.final-npm-setup-command }}
+      - name: Build project
+        run: ${{ inputs.build-command }}
+      - name: Deploy to lactame.com
+        uses: zakodium/lactame-action@v1
+        with:
+          token: ${{ secrets.lactame-token }}
+          name: ${{ env.PACKAGE_NAME }}
+          folder: ${{ inputs.folder }}

@@ -9,6 +9,7 @@ Shared reusable GitHub workflows.
 * [`docker-image`](#docker-image)
 * [`typedoc`](#typedoc)
 * [`npm-prerelease`](#npm-prerelease)
+* [`lactame-deploy`](#lactame-deploy)
 
 ### Node.js CI
 
@@ -357,4 +358,48 @@ jobs:
     secrets:
       github-token: ${{ secrets.BOT_TOKEN }}
       npm-token: ${{ secrets.NPM_BOT_TOKEN }}
+````
+
+### Lactame deploy
+
+This workflow builds a project and deploys it to [lactame.com](https://lactame.com)
+using the [lactame-action](https://github.com/zakodium/lactame-action).
+The package name from `package.json` is used as the deployment name.
+
+#### Inputs
+
+* **folder**:
+  * Folder containing the build output to deploy.
+  * Default: `dist`
+* **build-command**:
+  * Command used to build the project.
+  * Default: `npm run build`
+* **node-version**:
+  * Version of Node.js used to run the build steps.
+  * Default: `24.x`
+* **npm-setup-command**:
+  * Command used to set up the package before building.
+  * Default: `npm ci` if there is a `package-lock.json`, `npm install` otherwise.
+
+#### Secrets
+
+* **lactame-token**
+  Token used to deploy to lactame.com.
+
+#### Example usage
+
+````yml
+name: Deploy on lactame.com
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    # Documentation: https://github.com/zakodium/workflows#lactame-deploy
+    uses: zakodium/workflows/.github/workflows/lactame-deploy.yml@lactame-deploy-v1
+    secrets:
+      lactame-token: ${{ secrets.LACTAME_TOKEN }}
 ````

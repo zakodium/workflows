@@ -217,7 +217,7 @@ jobs:
         run: ${{ inputs.npm-test-command }}
       - name: Send coverage report to Codecov
         if: ${{ needs.prepare.outputs.final-upload-coverage == 'true' }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           fail_ci_if_error: true
           token: ${{ secrets.codecov-token }}

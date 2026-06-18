@@ -219,7 +219,8 @@ jobs:
         if: ${{ needs.prepare.outputs.final-upload-coverage == 'true' }}
         uses: codecov/codecov-action@v7
         with:
-          fail_ci_if_error: true
+          disable_telem: true
+          fail_ci_if_error: false
           token: ${{ secrets.codecov-token }}
   test-package:
     if: ${{ !inputs.disable-test-package }}

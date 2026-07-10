@@ -31,20 +31,27 @@ jobs:
     timeout-minutes: 5
     outputs:
       final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
+      has-package-lock: ${{ steps.get-command.outputs.has-package-lock }}
     steps:
       - uses: actions/checkout@v7
       - name: Get npm setup command
         id: get-command
         run: |
           SETUP_COMMAND="${{ inputs.npm-setup-command }}"
+          if [ -f "package-lock.json" ]; then
+            HAS_PACKAGE_LOCK="true"
+          else
+            HAS_PACKAGE_LOCK="false"
+          fi
           if [ "$SETUP_COMMAND" = "<auto>" ]; then
-            if [ -f "package-lock.json" ]; then
+            if [ "$HAS_PACKAGE_LOCK" = "true" ]; then
               SETUP_COMMAND="npm ci"
             else
               SETUP_COMMAND="npm install"
             fi
           fi
           echo "final-npm-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
+          echo "has-package-lock=$HAS_PACKAGE_LOCK" >> $GITHUB_OUTPUT
   deploy:
     needs: prepare
     runs-on: ubuntu-latest
@@ -53,7 +60,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node-version }}
-          cache: npm
+          cache: ${{ needs.prepare.outputs.has-package-lock == 'true' && 'npm' || '' }}
       - name: Run npm setup command
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Build documentation

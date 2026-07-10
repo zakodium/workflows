@@ -25,7 +25,8 @@ jobs:
     timeout-minutes: 5
     outputs:
       continue: ${{ steps.validation.outputs.continue }}
-      npm-final-setup-command: ${{ steps.get-command.outputs.npm-final-setup-command }}
+      final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
+      has-package-lock: ${{ steps.get-command.outputs.has-package-lock }}
     steps:
       - name: Validation of the event
         id: validation
@@ -48,14 +49,20 @@ jobs:
         if: ${{ steps.validation.outputs.continue }}
         run: |
           SETUP_COMMAND="${{ inputs.npm-setup-command }}"
+          if [ -f "package-lock.json" ]; then
+            HAS_PACKAGE_LOCK="true"
+          else
+            HAS_PACKAGE_LOCK="false"
+          fi
           if [ "$SETUP_COMMAND" = "<auto>" ]; then
-            if [ -f "package-lock.json" ]; then
+            if [ "$HAS_PACKAGE_LOCK" = "true" ]; then
               SETUP_COMMAND="npm ci"
             else
               SETUP_COMMAND="npm install"
             fi
           fi
-          echo "npm-final-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
+          echo "final-npm-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
+          echo "has-package-lock=$HAS_PACKAGE_LOCK" >> $GITHUB_OUTPUT
   npm-publish:
     needs: prepare
     if: ${{ needs.prepare.outputs.continue }}
@@ -67,9 +74,9 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: "https://registry.npmjs.org"
-          cache: npm
+          cache: ${{ needs.prepare.outputs.has-package-lock == 'true' && 'npm' || '' }}
       - name: Run npm setup command
-        run: ${{ needs.prepare.outputs.npm-final-setup-command }}
+        run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Get package version
         run: |
           PACKAGE_NAME=$(jq .name package.json | tr -d '"')

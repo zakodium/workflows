@@ -134,6 +134,7 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: ${{ matrix.registry-url }}
+          cache: npm
       - name: Run npm setup command
         if: ${{ matrix.enabled }}
         run: ${{ needs.release-please.outputs.npm-final-setup-command }}

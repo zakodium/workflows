@@ -53,6 +53,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node-version }}
+          cache: npm
       - name: Run npm setup command
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
       - name: Build documentation

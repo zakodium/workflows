@@ -67,6 +67,7 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: "https://registry.npmjs.org"
+          cache: npm
       - name: Run npm setup command
         run: ${{ needs.prepare.outputs.npm-final-setup-command }}
       - name: Get package version

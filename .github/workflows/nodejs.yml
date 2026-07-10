@@ -125,7 +125,7 @@ jobs:
   lint-eslint:
     if: ${{ inputs.lint-eslint }}
     needs: prepare
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
@@ -141,7 +141,7 @@ jobs:
   lint-prettier:
     if: ${{ inputs.lint-prettier }}
     needs: prepare
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
@@ -157,7 +157,7 @@ jobs:
   lint-check-types:
     if: ${{ inputs.lint-check-types }}
     needs: prepare
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
@@ -225,7 +225,7 @@ jobs:
   test-package:
     if: ${{ !inputs.disable-test-package }}
     needs: prepare
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7

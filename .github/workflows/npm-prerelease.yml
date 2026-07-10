@@ -59,7 +59,7 @@ jobs:
   npm-publish:
     needs: prepare
     if: ${{ needs.prepare.outputs.continue }}
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7

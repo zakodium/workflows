@@ -84,6 +84,7 @@ jobs:
     timeout-minutes: 5
     outputs:
       final-npm-setup-command: ${{ steps.get-command.outputs.final-npm-setup-command }}
+      has-package-lock: ${{ steps.get-command.outputs.has-package-lock }}
       final-upload-coverage: ${{ steps.check-codecov.outputs.final-upload-coverage }}
     steps:
       - uses: actions/checkout@v7
@@ -92,14 +93,20 @@ jobs:
         working-directory: ${{ inputs.cwd }}
         run: |
           SETUP_COMMAND="${{ inputs.npm-setup-command }}"
+          if [ -f "package-lock.json" ]; then
+            HAS_PACKAGE_LOCK="true"
+          else
+            HAS_PACKAGE_LOCK="false"
+          fi
           if [ "$SETUP_COMMAND" = "<auto>" ]; then
-            if [ -f "package-lock.json" ]; then
+            if [ "$HAS_PACKAGE_LOCK" = "true" ]; then
               SETUP_COMMAND="npm ci"
             else
               SETUP_COMMAND="npm install"
             fi
           fi
           echo "final-npm-setup-command=$SETUP_COMMAND" >> $GITHUB_OUTPUT
+          echo "has-package-lock=$HAS_PACKAGE_LOCK" >> $GITHUB_OUTPUT
       - name: Check Codecov settings
         id: check-codecov
         working-directory: ${{ inputs.cwd }}
@@ -132,7 +139,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node-version }}
-          cache: npm
+          cache: ${{ needs.prepare.outputs.has-package-lock == 'true' && 'npm' || '' }}
       - name: Run npm setup command
         working-directory: ${{ inputs.cwd }}
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
@@ -149,7 +156,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node-version }}
-          cache: npm
+          cache: ${{ needs.prepare.outputs.has-package-lock == 'true' && 'npm' || '' }}
       - name: Run npm setup command
         working-directory: ${{ inputs.cwd }}
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
@@ -166,7 +173,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node-version }}
-          cache: npm
+          cache: ${{ needs.prepare.outputs.has-package-lock == 'true' && 'npm' || '' }}
       - name: Run npm setup command
         working-directory: ${{ inputs.cwd }}
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
@@ -188,7 +195,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
+          cache: ${{ needs.prepare.outputs.has-package-lock == 'true' && 'npm' || '' }}
       - name: Setup env from secrets
         working-directory: ${{ inputs.cwd }}
         run: |
@@ -236,7 +243,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node-version }}
-          cache: npm
+          cache: ${{ needs.prepare.outputs.has-package-lock == 'true' && 'npm' || '' }}
       - name: Run npm setup command
         working-directory: ${{ inputs.cwd }}
         run: ${{ needs.prepare.outputs.final-npm-setup-command }}
